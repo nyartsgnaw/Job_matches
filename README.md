@@ -3,8 +3,9 @@ Goal: match job description to job titles
 
 
 Here are the workfolow I'll follow, the red part are parts I've already done.
-0. Data collection:
-0.1. by Kaggle:https://www.kaggle.com/madhab/jobposts  
+
+#### 0. Data collection:  
+0.1. by Kaggle:https://www.kaggle.com/madhab/jobposts   
 0.2. by Scrapper (require extra effort to customize on job description   scraping task).  
 0.3. by emailed scraped dataset (skipped for now).  
 
