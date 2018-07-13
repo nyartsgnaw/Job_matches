@@ -29,6 +29,7 @@ for k in count:
     pat = 'term'
     pat = 'knowledge'
     pat = 'about'
+    pat = 'resp'
     if re.search(pat,k[0].lower())!=None:
         print("\'"+k[0]+"\',")
 """
@@ -48,6 +49,23 @@ section_names['about'] = \
 #'About the trainers',
 ]
 
+section_names['responsibility'] = \
+['JOB RESPONSIBILITIES',
+'Other responsibilities',
+'Other Responsibilities',
+'responsibilities',
+'General Responsibilities',
+'Major Responsibilities',
+'RESPONSIBILITIES',
+'responsibilities include',
+'Specific Responsibilities',
+#'Secondary Responsibilities',
+'Responsibilities include',
+'Corresponding professional education',
+'Key Responsibilities',
+#'Incident  Emergency Response',
+#'of responsibility',
+]
 section_names['qualification_required'] = \
 ['REQUIRED QUALIFICATIONS',
 'Qualifications',
