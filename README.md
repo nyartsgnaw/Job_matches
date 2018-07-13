@@ -57,6 +57,6 @@ Here are the workfolow I'll follow, the red part are parts I've already done.
 
 
 #### 4. Evaluating:
-4.1. train on 1/2 of the data, validate on 1/4, test on 1/4
-4.2. for each testing Job Description X, get its output from neural network, calculate output cosine similarities with all SkipGram(Job Title), select the best as prediction
-4.3. error analysis: print the ranked job titles from cosine comparison
+4.1. train on 1/2 of the data, validate on 1/4, test on 1/4.  
+4.2. for each testing Job Description X, get its output from neural network, calculate output cosine similarities with all SkipGram(Job Title), select the best as prediction.  
+4.3. error analysis: print the ranked job titles from cosine comparison.  
