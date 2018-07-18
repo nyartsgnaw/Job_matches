@@ -21,13 +21,12 @@ def create_LSTM(input_dim,output_dim,embedding_matrix=[]):
                                     trainable=False)
         model.add(embedding_layer)
         
-#        model.add(LSTM(150))
+        model.add(LSTM(150))
         model.add(Bidirectional(LSTM(150, return_sequences=True)))
     else:
         model.add(LSTM(150,input_shape=(None,input_dim)))
         model.add(Bidirectional(LSTM(150, return_sequences=True, input_shape=(None,input_dim))))
 
-    model.add(LSTM(150))
 #    model.add(Bidirectional(LSTM(150, return_sequences=True)))
     
     model.add(BatchNormalization())
@@ -36,6 +35,7 @@ def create_LSTM(input_dim,output_dim,embedding_matrix=[]):
 
     model.add(Activation('relu'))
 #    model.add(Bidirectional(LSTM(200, return_sequences=True)))
+    model.add(Flatten())
     model.add(Dense(output_dim))
 #    model.add(TimeDistributed(Dense(output_dim)))
     model.add(BatchNormalization())

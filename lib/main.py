@@ -79,13 +79,16 @@ if __name__ == '__main__':
 
     # create the model    
     import_local_package('./models/LSTM_3.py',[])
-    embedding_matrix = load_embedding_fasttext(path_JD)
-    model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,time_steps=TIME_STEPS,embedding_matrix=embedding_matrix)
+    embedding_matrix = []
+#    embedding_matrix = load_embedding_fasttext(path_JD)
+#    model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,time_steps=TIME_STEPS,embedding_matrix=embedding_matrix)
+    model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,embedding_matrix=embedding_matrix)
 #    model_path = './../models/LSTM1-Data_all-Epoch_100-0.4971655747103564.model'
 #    model = load_model(model,model_path)
     model.compile(loss='cosine_proximity', optimizer='adam', metrics=['mse'])
 
-    model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=200,validation_split=0,patience=50,model_path='LSTM.model',log_path='LSTM_logs.csv')
+    model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=1,validation_split=0,patience=50,model_path='LSTM.model',log_path='LSTM_logs.csv')
+#    model = train_model(model,X_train=X_train,Y_train=Y_train,verbose=1,n_epoch=1,validation_split=0,patience=50,model_path='LSTM.model',log_path='LSTM_logs.csv')
 
     all_percs = [] #rank of true label in the queue of sorted job titles by cosine similarity
     all_top10 = [] #top10 job titles prediction 
@@ -95,7 +98,9 @@ if __name__ == '__main__':
         all_percs.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['rank_idx_correct'])
         all_top10.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['top10'])
         i+=1    
+    
 
     #model.save('./../models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
     #model.save('./../models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
-    model.save('./../models/LSTM2-Data_all-Epoch_100-0.5001153382010389.model',overwrite=True,include_optimizer=True)
+    #model.save('./../models/LSTM2-Data_all-Epoch_100-0.5001153382010389.model',overwrite=True,include_optimizer=True)
+    model.save('./../models/new.model')

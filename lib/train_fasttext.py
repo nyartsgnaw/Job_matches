@@ -13,6 +13,7 @@ def train_fasttext(texts,path_model,vector_dim=200):
 		labels.append(tmp)
 	
 	path_data = './../tmp/tmp.txt'
+	path_model = path_model.replace('.bin','')
 
 
 	with open(path_data,'w') as f:
