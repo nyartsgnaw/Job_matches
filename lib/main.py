@@ -87,7 +87,7 @@ if __name__ == '__main__':
 #    model = load_model(model,model_path)
     model.compile(loss='cosine_proximity', optimizer='adam', metrics=['mse'])
 
-    model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=1,validation_split=0,patience=50,model_path='LSTM.model',log_path='LSTM_logs.csv')
+    model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=200,validation_split=0,patience=20,model_path='LSTM.model',log_path='LSTM_logs.csv')
 #    model = train_model(model,X_train=X_train,Y_train=Y_train,verbose=1,n_epoch=1,validation_split=0,patience=50,model_path='LSTM.model',log_path='LSTM_logs.csv')
 
     all_percs = [] #rank of true label in the queue of sorted job titles by cosine similarity
