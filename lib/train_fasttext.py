@@ -22,8 +22,12 @@ def train_fasttext(texts,path_model,vector_dim=200):
 			i+=1
 
 	# train fasttext
-	import fasttext
-	model_fasttext = fasttext.skipgram(path_data, path_model, lr=0.05,epoch=50, dim=vector_dim,min_count=1,maxn=10,silent=0)
+	try:
+		import fasttext
+		model_fasttext = fasttext.skipgram(path_data, path_model, lr=0.05,epoch=50, dim=vector_dim,min_count=1,maxn=10,silent=0)
+	except:
+		command = "./../../fastText-0.1.0/fasttext skipgram -input {} -output {} -lr {} -epoch {} -dim {} -minCount {} -maxn {}".format(path_data,path_model,0.05,50,vector_dim,1,10)
+		os.system(command)
 	return model_fasttext
 	
 if __name__ == '__main__':
