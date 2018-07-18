@@ -34,17 +34,15 @@ vectors_JT = []
 i = 0
 while i < len(raw_vectors):
     ls = raw_vectors[i].split()
-    j = 0
-    while j < len(ls):
-        if (re.search('^\-?[0-9]*\.?[0-9]+$',ls[j])!=None) & (re.search('[a-zA-Z]+',ls[j+1])==None):
-            word = ' '.join(ls[:j])
-            nums = [float(x) for x in ls[j:]]
-            if len(nums)>100:
-                nums = nums[1:]
-            vectors_JT.append(nums)
-            break
 
-        j+=1
+    word = ' '.join(ls[:-100])
+    nums = [float(x) for x in ls[-100:]]
+    if len(nums)<100:
+        print(ls)
+    if len(nums)>100:
+        nums = nums[1:]
+    vectors_JT.append(nums)
+
     i+=1
 
 
