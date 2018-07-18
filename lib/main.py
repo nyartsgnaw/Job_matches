@@ -57,7 +57,7 @@ if __name__ == '__main__':
     with open(job_description_path,'r') as f:
         JD_ls = json.load(f)
 
-    texts = [x['responsibility']+' '+x['qualification']+' '+x['description'] for x in JD_ls]
+    texts = [x['responsibility']+' '+x['qualification'] for x in JD_ls]
 
     import fasttext
     path_JD = './../models/job_description_fasttext.bin'
