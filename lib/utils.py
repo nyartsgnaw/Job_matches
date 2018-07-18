@@ -81,7 +81,7 @@ def load_embedding():
 			embedding_weights[i] = embedding_vector
 	return embedding_weights
 
-with open('./../tmp/job_titles.txt','r') as f:
+with open(os.path.join(CWDIR,'./../tmp/job_titles.txt'),'r') as f:
 	titles = [x.replace('\n','') for x in f.readlines()]
 
 def predict_cosine_similarity(model,idx,X,Y):
