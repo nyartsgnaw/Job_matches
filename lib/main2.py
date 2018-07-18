@@ -40,15 +40,15 @@ if __name__ == '__main__':
     # fix random seed for reproducibility
     np.random.seed(7)
     # get embeddings
-    with open('./../tmp/job_titles.txt','r') as f:
+    with open(os.path.join(CWDIR,'./../tmp/job_titles.txt'),'r') as f:
         titles = [x.replace('\n','') for x in f.readlines()]
     
-    path_output_csv = './../models/vectors_JT.csv'
+    path_output_csv = os.path.join(CWDIR,'./../models/vectors_JT.csv')
     df_vectors = pd.read_csv(path_output_csv)
 
     labels = df_vectors.values
 
-    job_description_path = './../tmp/job_description.json'
+    job_description_path = os.path.join(CWDIR,'./../tmp/job_description.json')
     with open(job_description_path,'r') as f:
         JD_ls = json.load(f)
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     Y_train, Y_test = train_test_split(labels,train_size=0.8)
 
     # create the model    
-    import_local_package('./models/LSTM_3.py',[])
+    import_local_package(os.path.join(CWDIR,'./models/LSTM_3.py'),[])
     embedding_matrix = []
 #    embedding_matrix = load_embedding_fasttext(path_JD)
 #    model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,time_steps=TIME_STEPS,embedding_matrix=embedding_matrix)
@@ -88,4 +88,4 @@ if __name__ == '__main__':
     #model.save('./../models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
     #model.save('./../models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
     #model.save('./../models/LSTM2-Data_all-Epoch_100-0.5001153382010389.model',overwrite=True,include_optimizer=True)
-    model.save('./../models/new.model')
+    model.save(os.path.join(CWDIR,'./../models/new.model'))

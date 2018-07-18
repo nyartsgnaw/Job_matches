@@ -8,17 +8,20 @@ import json
 from nltk.tokenize import sent_tokenize,word_tokenize
 
 from nltk.stem import WordNetLemmatizer
-import os
 from gensim.models import Word2Vec
 
 from nltk.corpus import stopwords  
 
 from utils import get_similar_words
-
+import os
+try:
+	CWDIR = os.path.abspath(os.path.dirname(__file__))
+except:
+	CWDIR = os.getcwd()	
 class prepare_data():
 
     def __init__(self):
-        section_names_path = './../tmp/section_names.json'
+        section_names_path = os.path.join(CWDIR,'./../tmp/section_names.json')
         with open(section_names_path, 'r') as f:
             self.section_names = json.load(f)    
 
@@ -190,12 +193,12 @@ class prepare_data():
 
 
 if __name__ =='__main__':
-    job_description_path = './../tmp/job_description.json'
-    model_path = './../models/Word2Vec_nouns.model'
+    job_description_path = os.path.join(CWDIR,'./../tmp/job_description.json')
+    model_path = os.path.join(CWDIR,'./../models/Word2Vec_nouns.model')
 
     pdata = prepare_data()
     # get data
-    df_raw = pd.read_csv('./../data/online-job-postings/data job posts.csv')
+    df_raw = pd.read_csv(os.path.join(CWDIR,'./../data/online-job-postings/data job posts.csv'))
     df_raw = df_raw.loc[~df_raw['Title'].isna(),]
     texts = df_raw.jobpost.values
     # prepare data 

@@ -1,20 +1,25 @@
 
 
-import os
 import re 
 import pandas as pd 
-
+import os
+try:
+	CWDIR = os.path.abspath(os.path.dirname(__file__))
+except:
+	CWDIR = os.getcwd()	
 vector_dim = 100
-path_model = './../models/job_title_fasttext'
-path_data = './../tmp/job_titles.txt'
-path_vector_JD = './../models/vectors_JT.txt'
-path_output_csv = './../models/vectors_JT.csv'
+path_model = os.path.join(CWDIR,'./../models/job_title_fasttext')
+path_data = os.path.join(CWDIR,'./../tmp/job_titles.txt')
+path_vector_JD = os.path.join(CWDIR,'./../models/vectors_JT.txt')
+path_output_csv = os.path.join(CWDIR,'./../models/vectors_JT.csv')
+path_fasttext = os.path.join(CWDIR,'./../../fastText-0.1.0/fasttext')
+
 
 if ~os.path.isfile(path_model+'.bin'):
-    command = "./../../fastText-0.1.0/fasttext skipgram -input {} -output {} -lr {} -epoch {} -dim {} -minCount {} -maxn {}".format(path_data,path_model,0.05,50,vector_dim,1,10)
+    command = "{} skipgram -input {} -output {} -lr {} -epoch {} -dim {} -minCount {} -maxn {}".format(path_fasttext,path_data,path_model,0.05,50,vector_dim,1,10)
     os.system(command)
 
-command = " ./../../fastText-0.1.0/fasttext print-sentence-vectors {} < {} > {}".format(path_model+'.bin',path_data,path_vector_JD)
+command = "{} print-sentence-vectors {} < {} > {}".format(path_fasttext,path_model+'.bin',path_data,path_vector_JD)
 os.system(command)
     
 with open(path_data,'r') as f:

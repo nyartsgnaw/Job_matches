@@ -4,6 +4,11 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger
 from nltk.corpus import wordnet as wn
 import numpy as np 
 import re
+import os
+try:
+	CWDIR = os.path.abspath(os.path.dirname(__file__))
+except:
+	CWDIR = os.getcwd()	
 def train_model(model,\
 		X_train,Y_train,\
 		n_epoch =  200,\
