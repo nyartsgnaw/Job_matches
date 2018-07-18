@@ -98,7 +98,11 @@ if __name__ == '__main__':
         all_percs.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['rank_idx_correct'])
         all_top10.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['top10'])
         i+=1    
-    
+        
+    df1 = pd.DataFrame(all_top10,columns=list(range(1,11)))
+    df2 = pd.DataFrame(all_percs, columns=['rank_percentage'])
+    df = pd.concat([df1,df2],axis=1)
+    df.to_csv(os.path.join(CWDIR,'./../results.csv'),index=False)    
 
     #model.save('./../models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
     #model.save('./../models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
