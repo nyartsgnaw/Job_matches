@@ -2,11 +2,9 @@ from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
 import numpy as np 
-import fasttext 
 from sklearn.model_selection import train_test_split
 import pandas as pd
-from utils import train_model,load_model,get_rank_info,predict_cosine_similarity,load_embedding_fasttext
-from train_fasttext import train_fasttext
+from utils import train_model,load_model,get_rank_info,predict_cosine_similarity
 import json
 import os
 try:
