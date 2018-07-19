@@ -114,25 +114,3 @@ def get_rank_info(model,idx,X,Y):
 	return {'rank_idx_correct':i/len(sorted_dict),'top10':{titles[idx]:ranks}}
 
 
-def get_similar_words(ls,model,k=20,topn=20,condition = True):
-	
-	updates = []
-	for x in ls:  
-		if x in model.wv.vocab.keys():
-			#keep ones with high similarity and less ambiguous senses in tree bank
-			if condition == True:
-				values = [k for k,v in model.wv.most_similar_cosmul(x,topn=topn) if (v >0.95)&(len(wn.synsets(k))<1)]
-			else:
-				values = [k for k,v in model.wv.most_similar_cosmul(x,topn=topn) if (v >0.95)]
-
-			updates+=values
-	output = list(set(updates+ls))
-	print(k,len(output),topn,condition)
-	k-=1
-	if k >=0:
-		if len(output)-len(ls) < int(topn/2):
-			return output
-		
-		return get_similar_words(output,model=model,k=k,topn=topn,condition=condition)
-	else:
-		return output

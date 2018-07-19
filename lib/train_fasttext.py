@@ -1,10 +1,31 @@
 # train a fasttext model to map Job Titles into vector representation
-from prepare_data import prepare_data
+import pandas as pd
 import os
 try:
 	CWDIR = os.path.abspath(os.path.dirname(__file__))
 except:
 	CWDIR = os.getcwd()	
+def import_local_package(addr_pkg,function_list=[]):
+	#import local package by address
+	#it has to be imported directly in the file that contains functions required the package, i.e. it cannot be imported by from .../utils import import_local_package
+	import importlib.util
+	spec = importlib.util.spec_from_file_location('pkg', addr_pkg)
+	myModule = importlib.util.module_from_spec(spec)
+	spec.loader.exec_module(myModule)
+	if len(function_list)==0:
+		import re
+		function_list = [re.search('^[a-zA-Z]*.*',x).group() for x in dir(myModule) if re.search('^[a-zA-Z]',x) != None]
+
+	for _f in function_list:
+		try:
+			eval(_f)
+		except NameError:
+			exec("global {}; {} = getattr(myModule,'{}')".format(_f,_f,_f)) #exec in function has to use global in 1 line
+			print("{} imported".format(_f))
+
+	return
+import_local_package(os.path.join(CWDIR,'./prepare_data.py'),['prepare_data'])
+
 
 def train_fasttext(texts,path_model,vector_dim=200):
 	pdata = prepare_data()
@@ -35,14 +56,13 @@ def train_fasttext(texts,path_model,vector_dim=200):
 		os.system(command)
 	os.remove(path_data)
 	return model_fasttext
-	
-def train_fasttext2(texts,path_model,vector_dim=200,path_fasttext='./../../fastText-0.1.0/fasttext'):
+VECTOR_DIM = 200
+def train_fasttext2(texts,path_model,vector_dim=VECTOR_DIM,path_fasttext='./../../fastText-0.1.0/fasttext',path_output_csv = os.path.join(CWDIR,'./../logs/models/vectors_JT-{}.csv'.format(VECTOR_DIM))):
 #   vector_dim = 200
 #   path_model = os.path.join(CWDIR,'./../models/job_title_fasttext')
 #   path_fasttext = os.path.join(CWDIR,'./../../fastText-0.1.0/fasttext')
 	path_data = os.path.join(CWDIR,'./../tmp/job_titles.txt')
 	path_vector_JD = os.path.join(CWDIR,'./../logs/models/vectors_JT-{}.txt'.format(vector_dim))
-	path_output_csv = os.path.join(CWDIR,'./../logs/models/vectors_JT-{}.csv'.format(vector_dim))
 	path_model = path_model.replace('.bin','')
 
 	pdata = prepare_data()
@@ -71,7 +91,6 @@ def train_fasttext2(texts,path_model,vector_dim=200,path_fasttext='./../../fastT
 
 	with open(path_vector_JD,'r') as f:
 		raw_vectors = [x.replace('\n','') for x in f.readlines()]
-	os.remove(path_vector_JD)
 	vectors_JT = []
 	i = 0
 	while i < len(raw_vectors):
@@ -90,6 +109,8 @@ def train_fasttext2(texts,path_model,vector_dim=200,path_fasttext='./../../fastT
 	df_vectors = pd.DataFrame(vectors_JT)
 
 	df_vectors.to_csv(path_output_csv,index=False)
+	os.remove(path_vector_JD)
+
 	return df_vectors,labels
 
 
@@ -100,10 +121,8 @@ if __name__ == '__main__':
 	df_raw = df_raw.loc[~df_raw['Title'].isna(),]	
 	titles = df_raw.Title.values
 	#train model
+	"""
 	model_fasttext = train_fasttext(titles,path_model = os.path.join(CWDIR,'./../logs/models/job_title_fasttext'))
-#	df_vectors,labels = train_fasttext2(titles,path_model = os.path.join(CWDIR,'./../logs/models/job_title_fasttext'),vector_dim=200,path_fasttext='./../../fastText-0.1.0/fasttext')
-
-	# evaluate fasttext model
 	import sklearn
 	sklearn.metrics.pairwise.cosine_similarity([model_fasttext['Programs Manager']],[model_fasttext['Software Developer']])
 	sklearn.metrics.pairwise.cosine_similarity([model_fasttext['Programs Manager']],[model_fasttext['Project Manager']])
@@ -111,6 +130,11 @@ if __name__ == '__main__':
 	sklearn.metrics.pairwise.cosine_similarity([model_fasttext['Data engineer']],[model_fasttext['Data Developer']])
 	sklearn.metrics.pairwise.cosine_similarity([model_fasttext['Data engineer']],[model_fasttext['Hadoop developer']])
 	sklearn.metrics.pairwise.cosine_similarity([model_fasttext['Data scientist']],[model_fasttext['Accountant/Financial Analyst']])
+	"""
+
+	df_vectors,labels = train_fasttext2(titles,path_model = os.path.join(CWDIR,'./../logs/models/job_title_fasttext'),vector_dim=200,path_fasttext='./../../fastText-0.1.0/fasttext')
+
+	# evaluate fasttext model
 
 
 
