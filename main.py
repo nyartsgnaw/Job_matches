@@ -31,6 +31,7 @@ def import_local_package(addr_pkg,function_list=[]):
 
 	return
 import_local_package(os.path.join(CWDIR,'./lib/utils.py'),['train_model','load_model','get_rank_info','predict_cosine_similarity'])
+import_local_package(os.path.join(CWDIR,'./lib/prepare_data.py'),[])
 
 
 if __name__ == '__main__':
@@ -59,16 +60,16 @@ if __name__ == '__main__':
 
 	if not os.path.isfile(path_vectors):
 		path_fasttext = os.path.join(CWDIR,'./../fastText-0.1.0/fasttext')
+		path_model_fasttext = os.path.join(CWDIR,'./logs/models/job_title_fasttext')
 		import_local_package(os.path.join(CWDIR,'./lib/train_fasttext.py'),['train_fasttext','train_fasttext2'])
 		if os.path.isfile(path_fasttext):
-			path_model_fasttext = os.path.join(CWDIR,'./logs/models/job_title_fasttext')
 			df_vectors,labels = train_fasttext2(titles,path_model = path_model_fasttext ,vector_dim=OUTPUT_DIM,path_fasttext=path_fasttext,path_output_csv=path_vectors)
-			df_vectors = pd.read_csv(path_vectors)
-			labels = df_vectors.values
 		else:
 			model_fasttext = train_fasttext(titles,path_model = path_model_fasttext)
 			labels = np.array([np.array(model_fasttext[word]) for word in titles])
-
+	
+	df_vectors = pd.read_csv(path_vectors)
+	labels = df_vectors.values
 	# prepare trainig/testing data
 	with open(path_data,'r') as f:
 		JD_ls = json.load(f)

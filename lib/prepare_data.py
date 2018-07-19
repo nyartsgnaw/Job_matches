@@ -43,8 +43,7 @@ def get_similar_words(ls,model,k=20,topn=20,condition = True):
 
 class prepare_data():
 
-    def __init__(self):
-        section_names_path = os.path.join(CWDIR,'./../tmp/section_names.json')
+    def __init__(self,section_names_path=os.path.join(CWDIR,'./../tmp/section_names.json')):
         with open(section_names_path, 'r') as f:
             self.section_names = json.load(f)    
 
