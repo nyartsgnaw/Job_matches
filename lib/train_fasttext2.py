@@ -11,7 +11,7 @@ vector_dim = 100
 path_model = os.path.join(CWDIR,'./../models/job_title_fasttext')
 path_data = os.path.join(CWDIR,'./../tmp/job_titles.txt')
 path_vector_JD = os.path.join(CWDIR,'./../models/vectors_JT.txt')
-path_output_csv = os.path.join(CWDIR,'./../models/vectors_JT.csv')
+path_output_csv = os.path.join(CWDIR,'./../models/vectors_JT-100.csv')
 path_fasttext = os.path.join(CWDIR,'./../../fastText-0.1.0/fasttext')
 
 
@@ -35,11 +35,11 @@ i = 0
 while i < len(raw_vectors):
     ls = raw_vectors[i].split()
 
-    word = ' '.join(ls[:-100])
-    nums = [float(x) for x in ls[-100:]]
-    if len(nums)<100:
+    word = ' '.join(ls[:-vector_dim])
+    nums = [float(x) for x in ls[-vector_dim:]]
+    if len(nums)<vector_dim:
         print(ls)
-    if len(nums)>100:
+    if len(nums)>vector_dim:
         nums = nums[1:]
     vectors_JT.append(nums)
 

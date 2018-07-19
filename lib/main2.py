@@ -43,7 +43,7 @@ if __name__ == '__main__':
     with open(os.path.join(CWDIR,'./../tmp/job_titles.txt'),'r') as f:
         titles = [x.replace('\n','') for x in f.readlines()]
     
-    path_output_csv = os.path.join(CWDIR,'./../models/vectors_JT.csv')
+    path_output_csv = os.path.join(CWDIR,'./../models/vectors_JT-100.csv')
     df_vectors = pd.read_csv(path_output_csv)
 
     labels = df_vectors.values
@@ -70,10 +70,14 @@ if __name__ == '__main__':
     embedding_matrix = []
 #    embedding_matrix = load_embedding_fasttext(path_JD)
 #    model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,time_steps=TIME_STEPS,embedding_matrix=embedding_matrix)
-    model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,embedding_matrix=embedding_matrix)
-    model.compile(loss='cosine_proximity', optimizer='adam', metrics=['mse'])
+#    model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,embedding_matrix=embedding_matrix)
+    from keras.models import load_model
+    model = load_model(os.path.join(CWDIR,'./../models/new.model'))
+    from keras.optimizers import SGD, Adam, RMSprop
+    adam=Adam(lr=0.005, beta_1=0.9 ,decay=0.001)
+    model.compile(loss='cosine_proximity', optimizer=adam, metrics=['mse'])
 
-    model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=200,validation_split=0,patience=20,model_path='LSTM.model',log_path='LSTM_logs.csv')
+    model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=200,validation_split=0,patience=30,model_path='LSTM.model',log_path='LSTM_logs.csv')
 
     all_percs = [] #rank of true label in the queue of sorted job titles by cosine similarity
     all_top10 = [] #top10 job titles prediction 
@@ -83,8 +87,15 @@ if __name__ == '__main__':
         all_percs.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['rank_idx_correct'])
         all_top10.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['top10'])
         i+=1    
-    
-    df1 = pd.DataFrame(all_top10,columns=list(range(1,11)))
+
+
+    ls1 = []
+    for x in all_top10:
+        for k,v in x.items():
+            ls1.append([k]+list(v))
+            
+
+    df1 = pd.DataFrame(ls1,columns=['label']+list(range(10)))
     df2 = pd.DataFrame(all_percs, columns=['rank_percentage'])
     df = pd.concat([df1,df2],axis=1)
     df.to_csv(os.path.join(CWDIR,'./../results.csv'),index=False)
@@ -93,3 +104,4 @@ if __name__ == '__main__':
     #model.save('./../models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
     #model.save('./../models/LSTM2-Data_all-Epoch_100-0.5001153382010389.model',overwrite=True,include_optimizer=True)
     model.save(os.path.join(CWDIR,'./../models/new.model'))
+

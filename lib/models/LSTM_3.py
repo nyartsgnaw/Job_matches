@@ -59,4 +59,4 @@ def create_LSTM(input_dim,output_dim,time_steps=1,embedding_matrix=[]):
 
 if __name__ == '__main__':
     model_id = 'LSTM_1'
-    model = create_LSTM(input_dim=200,output_dim=100,time_steps=1,embedding_matrix=[])
+    model = create_LSTM(input_dim=200,output_dim=200,time_steps=1,embedding_matrix=[])
