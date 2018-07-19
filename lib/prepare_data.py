@@ -194,7 +194,7 @@ class prepare_data():
 
 if __name__ =='__main__':
     job_description_path = os.path.join(CWDIR,'./../tmp/job_description.json')
-    model_path = os.path.join(CWDIR,'./../models/Word2Vec_nouns.model')
+    model_path = os.path.join(CWDIR,'./../logs/models/Word2Vec_nouns.model')
 
     pdata = prepare_data()
     # get data
