@@ -24,9 +24,9 @@ def create_LSTM(input_dim=200,output_dim=200):
     model.add(Activation('relu'))
     model.add(Dense(200))
     model.add(BatchNormalization())
-    model.add(Activation('sigmoid'))
+    model.add(Activation('tanh'))
     model.add(Dense(output_dim))
-    model.add(Activation('sigmoid'))
+    model.add(Activation('tanh'))
     print(model.summary())
     return model
 

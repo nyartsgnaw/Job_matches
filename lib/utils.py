@@ -1,4 +1,3 @@
-from sklearn.metrics.pairwise import cosine_similarity
 import operator
 from keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger
 from nltk.corpus import wordnet as wn
@@ -84,9 +83,12 @@ def load_embedding():
 with open(os.path.join(CWDIR,'./../tmp/job_titles.txt'),'r') as f:
 	titles = [x.replace('\n','') for x in f.readlines()]
 
+
+from sklearn.metrics.pairwise import cosine_similarity
 def predict_cosine_similarity(model,idx,X,Y):
 	yhat = model.predict(X[idx].reshape([-1,X.shape[1],1,1]))
 	return cosine_similarity(yhat,Y)
+
 
 
 def get_rank_info(model,idx,X,Y):

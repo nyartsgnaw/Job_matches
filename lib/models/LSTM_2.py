@@ -39,7 +39,7 @@ def create_LSTM(input_dim,output_dim,embedding_matrix=[]):
     model.add(Dense(output_dim))
 #    model.add(TimeDistributed(Dense(output_dim)))
     model.add(BatchNormalization())
-    model.add(Activation('sigmoid'))
+    model.add(Activation('tanh'))
 
     print(model.summary())
 

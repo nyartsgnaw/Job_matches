@@ -43,7 +43,8 @@ if __name__ == '__main__':
 	PATIENCE = 100 #for LSTM
 	EXP_ID = '3' #the name for this experiment 
 	TRAIN_MODEL = False
-	MODEL_ID = 'LSTM_3' #model framework
+	MODEL_ID = 'LSTM_6' #model framework
+	LOSS = 'cosine_proximity'
 
 	import_local_package(os.path.join(CWDIR,'./lib/models/{}.py'.format(MODEL_ID)),[])
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
@@ -93,7 +94,7 @@ if __name__ == '__main__':
 	if TRAIN_MODEL == True:
 		from keras.optimizers import SGD, Adam, RMSprop
 		adam=Adam(lr=0.005, beta_1=0.9 ,decay=0.001)
-		model.compile(loss='cosine_proximity', optimizer=adam, metrics=['mse'])
+		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
 		model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=N_EPOCH,validation_split=0,patience=PATIENCE,model_path='./../logs/LSTM_train_{}.model'.format(EXP_ID),log_path='./../logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID))
 		model.save(path_model)
 
