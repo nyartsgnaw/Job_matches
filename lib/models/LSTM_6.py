@@ -39,19 +39,19 @@ def create_LSTM(input_dim,output_dim,time_steps=1,embedding_matrix=[]):
     else:
         x = Reshape([input_dim,1,])(inputs)
 
-    x = Bidirectional(LSTM(150, return_sequences=True))(x)
+    x = Bidirectional(LSTM(128, return_sequences=True))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
 
 
-    x = Bidirectional(LSTM(150, return_sequences=True))(x)
+    x = Bidirectional(LSTM(32, return_sequences=True))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
 
-    x = attention_3d_block(x,input_dim=input_dim)
-#    x = Flatten()(x)
+#    x = attention_3d_block(x,input_dim=input_dim)
+    x = Flatten()(x)
     x = BatchNormalization()(x)
- #   x = Dense(400, activation='tanh')(x)
+    x = Dense(32, activation='tanh')(x)
     output = Dense(output_dim, activation='tanh')(x)
     model = Model(input=[inputs], output=output)
     print(model.summary())

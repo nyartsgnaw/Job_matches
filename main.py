@@ -36,15 +36,20 @@ import_local_package(os.path.join(CWDIR,'./lib/prepare_data.py'),[])
 
 if __name__ == '__main__':
 	# inputs
-	OUTPUT_DIM = 200 # LSTM output vector dimension, should match that of Word2Vec of labels
-	INPUT_DIM = 200 # LSTM input vector dimension, length of tokens cut from original data texts for each record
-	TIME_STEPS = 1 #for LSTM sequential
-	N_EPOCH = 400 #for LSTM
-	PATIENCE = 100 #for LSTM
-	EXP_ID = '3' #the name for this experiment 
-	TRAIN_MODEL = False
-	MODEL_ID = 'LSTM_6' #model framework
-	LOSS = 'cosine_proximity'
+	df_exp = pd.read_excel(os.path.join(CWDIR,'./experiments/exp_logs.xlsx'))
+	idx = 0
+	exp = df_exp.iloc[idx]
+	EXP_ID = exp['EXP_ID'] #the name for this experiment 
+	MODEL_ID = exp['MODEL_ID'] #model framework
+	OUTPUT_DIM = int(exp['OUTPUT_DIM']) # LSTM output vector dimension, should match that of Word2Vec of labels
+	INPUT_DIM = int(exp['INPUT_DIM']) # LSTM input vector dimension, length of tokens cut from original data texts for each record
+	TIME_STEPS = int(exp['TIME_STEPS']) #for LSTM sequential
+	N_EPOCH = int(exp['N_EPOCH']) #for LSTM
+	PATIENCE = int(exp['PATIENCE']) #for LSTM
+	TRAIN_MODEL = int(exp['TRAIN_MODEL'])
+	LOSS=exp['LOSS']
+	print(exp)
+	
 
 	import_local_package(os.path.join(CWDIR,'./lib/models/{}.py'.format(MODEL_ID)),[])
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
@@ -60,12 +65,15 @@ if __name__ == '__main__':
 		titles = [x.replace('\n','') for x in f.readlines()]
 
 	if not os.path.isfile(path_vectors):
+		print('Warning: fasfttext model wasn\'t found, start retraining...')
 		path_fasttext = os.path.join(CWDIR,'./../fastText-0.1.0/fasttext')
 		path_model_fasttext = os.path.join(CWDIR,'./logs/models/job_title_fasttext')
 		import_local_package(os.path.join(CWDIR,'./lib/train_fasttext.py'),['train_fasttext','train_fasttext2'])
 		if os.path.isfile(path_fasttext):
+			print('Start training fasttext in Linux environment...')
 			df_vectors,labels = train_fasttext2(titles,path_model = path_model_fasttext ,vector_dim=OUTPUT_DIM,path_fasttext=path_fasttext,path_output_csv=path_vectors)
 		else:
+			print('Start training fasttext in Python environment...')
 			model_fasttext = train_fasttext(titles,path_model = path_model_fasttext)
 			labels = np.array([np.array(model_fasttext[word]) for word in titles])
 	
@@ -95,7 +103,11 @@ if __name__ == '__main__':
 		from keras.optimizers import SGD, Adam, RMSprop
 		adam=Adam(lr=0.005, beta_1=0.9 ,decay=0.001)
 		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
-		model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),Y_train=Y_train,verbose=1,n_epoch=N_EPOCH,validation_split=0,patience=PATIENCE,model_path='./../logs/LSTM_train_{}.model'.format(EXP_ID),log_path='./../logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID))
+		model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),\
+							Y_train=Y_train,\
+							verbose=1,n_epoch=N_EPOCH,validation_split=0,patience=PATIENCE,
+							model_path=os.path.join(CWDIR,'./logs/LSTM_train_{}.model'.format(EXP_ID)),
+							log_path=os.path.join(CWDIR,'./logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID)))
 		model.save(path_model)
 
 	#evaluate the model
