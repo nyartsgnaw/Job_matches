@@ -37,7 +37,7 @@ import_local_package(os.path.join(CWDIR,'./lib/prepare_data.py'),[])
 if __name__ == '__main__':
 	# inputs
 	df_exp = pd.read_excel(os.path.join(CWDIR,'./experiments/exp_logs.xlsx'))
-	idx = 0
+	idx = 4
 	exp = df_exp.iloc[idx]
 	EXP_ID = exp['EXP_ID'] #the name for this experiment 
 	MODEL_ID = exp['MODEL_ID'] #model framework
@@ -46,7 +46,8 @@ if __name__ == '__main__':
 	TIME_STEPS = int(exp['TIME_STEPS']) #for LSTM sequential
 	N_EPOCH = int(exp['N_EPOCH']) #for LSTM
 	PATIENCE = int(exp['PATIENCE']) #for LSTM
-	TRAIN_MODEL = int(exp['TRAIN_MODEL'])
+#	TRAIN_MODEL = int(exp['TRAIN_MODEL'])
+	TRAIN_MODEL = False
 	LOSS=exp['LOSS']
 	print(exp)
 	
@@ -57,7 +58,7 @@ if __name__ == '__main__':
 	path_data = os.path.join(CWDIR,'./tmp/job_description.json')
 	path_model = os.path.join(CWDIR,'./logs/models/LSTM_{}.model'.format(EXP_ID))
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
-
+	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/eval/')))
 	# fix random seed for reproducibility
 	np.random.seed(7)
 	# get embeddings
