@@ -37,7 +37,7 @@ import_local_package(os.path.join(CWDIR,'./lib/prepare_data.py'),[])
 if __name__ == '__main__':
 	# inputs
 	df_exp = pd.read_excel(os.path.join(CWDIR,'./experiments/exp_logs.xlsx'))
-	idx = 4
+	idx = 11
 	exp = df_exp.iloc[idx]
 	EXP_ID = exp['EXP_ID'] #the name for this experiment 
 	MODEL_ID = exp['MODEL_ID'] #model framework
@@ -46,8 +46,7 @@ if __name__ == '__main__':
 	TIME_STEPS = int(exp['TIME_STEPS']) #for LSTM sequential
 	N_EPOCH = int(exp['N_EPOCH']) #for LSTM
 	PATIENCE = int(exp['PATIENCE']) #for LSTM
-#	TRAIN_MODEL = int(exp['TRAIN_MODEL'])
-	TRAIN_MODEL = False
+	TRAIN_MODEL = int(exp['TRAIN_MODEL'])
 	LOSS=exp['LOSS']
 	print(exp)
 	
