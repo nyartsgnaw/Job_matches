@@ -113,8 +113,8 @@ def start_exp(exp):
 	all_percs = [] #rank of true label in the queue of sorted job titles by cosine similarity
 	all_top10 = [] #top10 job titles prediction 
 	i= 0 
-#	while i < len(X_test):
-	while i < 2:
+	while i < len(X_test):
+#	while i < 2:
 		print(i)
 		all_percs.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['rank_idx_correct'])
 		all_top10.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['top10'])
