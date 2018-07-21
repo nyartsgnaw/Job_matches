@@ -1,3 +1,4 @@
+import time
 import os
 try:
 	CWDIR = os.path.abspath(os.path.dirname(__file__))
@@ -12,4 +13,4 @@ if __name__ == '__main__':
             idx = f.write(str(i))
         os.system('sbatch submit_job.sh')
         time.sleep(1)
-        print('Successfully submit the {}th job.'.format(i))
+        print('The {}th job is submitted.'.format(i))
