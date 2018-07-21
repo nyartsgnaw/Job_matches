@@ -34,11 +34,8 @@ import_local_package(os.path.join(CWDIR,'./lib/utils.py'),['train_model','load_m
 import_local_package(os.path.join(CWDIR,'./lib/prepare_data.py'),[])
 
 
-if __name__ == '__main__':
-	# inputs
-	df_exp = pd.read_excel(os.path.join(CWDIR,'./experiments/exp_logs.xlsx'))
-	idx = 11
-	exp = df_exp.iloc[idx]
+
+def start_exp(exp):
 	EXP_ID = exp['EXP_ID'] #the name for this experiment 
 	MODEL_ID = exp['MODEL_ID'] #model framework
 	OUTPUT_DIM = int(exp['OUTPUT_DIM']) # LSTM output vector dimension, should match that of Word2Vec of labels
@@ -46,17 +43,19 @@ if __name__ == '__main__':
 	TIME_STEPS = int(exp['TIME_STEPS']) #for LSTM sequential
 	N_EPOCH = int(exp['N_EPOCH']) #for LSTM
 	PATIENCE = int(exp['PATIENCE']) #for LSTM
-	TRAIN_MODEL = int(exp['TRAIN_MODEL'])
-	LOSS=exp['LOSS']
+	TRAIN_MODEL = int(exp['IS_TRAIN'])
+	LOSS=exp['LOSS_FUNC']
 	print(exp)
 	
 
-	import_local_package(os.path.join(CWDIR,'./lib/models/{}.py'.format(MODEL_ID)),[])
+	import_local_package(os.path.join(CWDIR,'./experiments/models/{}.py'.format(MODEL_ID)),[])
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
 	path_labels = os.path.join(CWDIR,'./tmp/job_titles.txt')
 	path_data = os.path.join(CWDIR,'./tmp/job_description.json')
 	path_model = os.path.join(CWDIR,'./logs/models/LSTM_{}.model'.format(EXP_ID))
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
+	path_training_model = os.path.join(CWDIR,'./logs/LSTM_train_{}.model'.format(EXP_ID))
+	path_training_log = os.path.join(CWDIR,'./logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID))
 	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/eval/')))
 	# fix random seed for reproducibility
 	np.random.seed(7)
@@ -106,15 +105,16 @@ if __name__ == '__main__':
 		model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),\
 							Y_train=Y_train,\
 							verbose=1,n_epoch=N_EPOCH,validation_split=0,patience=PATIENCE,
-							model_path=os.path.join(CWDIR,'./logs/LSTM_train_{}.model'.format(EXP_ID)),
-							log_path=os.path.join(CWDIR,'./logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID)))
+							model_path=path_training_model,
+							log_path=path_training_log)
 		model.save(path_model)
 
 	#evaluate the model
 	all_percs = [] #rank of true label in the queue of sorted job titles by cosine similarity
 	all_top10 = [] #top10 job titles prediction 
 	i= 0 
-	while i < len(X_test):
+#	while i < len(X_test):
+	while i < 2:
 		print(i)
 		all_percs.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['rank_idx_correct'])
 		all_top10.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['top10'])
@@ -123,6 +123,12 @@ if __name__ == '__main__':
 	for x in all_top10:
 		for k,v in x.items():
 			ls1.append([k]+list(v))
+	df_log = pd.read_csv(path_training_log)
+	exp['RANK_SCORE'] = np.mean(all_percs)
+	exp['QUIT_LOSS'] = df_log.iloc[-1]['loss']
+	exp['QUIT_EPOCH'] = df_log.iloc[-1]['epoch']
+	exp['QUIT_MSE'] = df_log.iloc[-1]['mean_squared_error']
+	exp['N_PARAMS'] = model.count_params()
 			
 	df = pd.concat([pd.DataFrame(ls1,columns=['label']+list(range(10))),pd.DataFrame(all_percs, columns=['rank_percentage'])],axis=1)
 	df.to_csv(path_eval,index=False)
@@ -130,4 +136,21 @@ if __name__ == '__main__':
 	#model.save('./../logs/models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
 	#model.save('./../logs/models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
 	#model.save('./../logs/models/LSTM2-Data_all-Epoch_100-0.5001153382010389.model',overwrite=True,include_optimizer=True)
+	return exp
+
+if __name__ == '__main__':
+	# inputs
+	path_exp = os.path.join(CWDIR,'./experiments/exp_logs.xlsx')
+	df_exp = pd.read_excel(path_exp)
+#	idx =0 
+	with open(os.path.join(CWDIR,'./experiments/.idx'),'r') as f:
+		idx = int(f.read())
+	
+	exp = df_exp.iloc[idx]
+	if exp['IS_RUN']:
+		exp = start_exp(exp)
+		exp['IS_RUN'] = 0
+		df_exp.iloc[idx] = exp
+		df_exp.to_excel(path_exp,index=False)
+
 

@@ -4,8 +4,9 @@
 #SBATCH -n 1 
 #SBATCH --time=0-24:00:00 
 # SBATCH --workdir=/home/straynwang/HLAGAN
-#SBATCH --output=slurm-%j.out
-#SBATCH --error=slurm-%j.err
+mkdir -p logs
+#SBATCH --output=./logs/slurm-%j.out
+#SBATCH --error=./logs/slurm-%j.err
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=straynwang@gwu.edu
 
