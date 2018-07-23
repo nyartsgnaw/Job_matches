@@ -123,19 +123,25 @@ def start_exp(exp):
 	for x in all_top10:
 		for k,v in x.items():
 			ls1.append([k]+list(v))
-	df_log = pd.read_csv(path_training_log)
-	exp['RANK_SCORE'] = np.mean(all_percs)
-	exp['QUIT_LOSS'] = df_log.iloc[-1]['loss']
-	exp['QUIT_EPOCH'] = df_log.iloc[-1]['epoch']
-	exp['QUIT_MSE'] = df_log.iloc[-1]['mean_squared_error']
-	exp['N_PARAMS'] = model.count_params()
-			
 	df = pd.concat([pd.DataFrame(ls1,columns=['label']+list(range(10))),pd.DataFrame(all_percs, columns=['rank_percentage'])],axis=1)
 	df.to_csv(path_eval,index=False)
 
-	#model.save('./../logs/models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
-	#model.save('./../logs/models/LSTM1-Data_nouns-Epoch_100-0.4983134954955406.model')
-	#model.save('./../logs/models/LSTM2-Data_all-Epoch_100-0.5001153382010389.model',overwrite=True,include_optimizer=True)
+	df_log = pd.read_csv(path_training_log)
+	try:
+		exp['RANK_SCORE'] = np.mean(all_percs)
+	except Exception as e:
+		print(e)
+	try:
+		exp['QUIT_LOSS'] = df_log.iloc[-1]['loss']
+		exp['QUIT_EPOCH'] = df_log.iloc[-1]['epoch']
+		exp['QUIT_MSE'] = df_log.iloc[-1]['mean_squared_error']
+	except Exception as e:
+		print(e)
+
+	try:
+		exp['N_PARAMS'] = model.count_params()
+	except Exception as e:
+		print(e)
 	return exp
 
 if __name__ == '__main__':
