@@ -1,0 +1,173 @@
+Using TensorFlow backend.
+WARNING:tensorflow:From /c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/tensorflow/contrib/learn/python/learn/datasets/base.py:198: retry (from tensorflow.contrib.learn.python.learn.datasets.base) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use the retry module or similar alternatives.
+WARNING:tensorflow:From /c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/keras/backend/tensorflow_backend.py:1150: calling reduce_sum (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/keras/backend/tensorflow_backend.py:1114: calling reduce_max (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+/c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/keras/engine/topology.py:1231: UserWarning: The `Merge` layer is deprecated and will be removed after 08/2017. Use instead layers from `keras.layers.merge`, e.g. `add`, `concatenate`, etc.
+  return cls(**config)
+WARNING:tensorflow:From /c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/keras/backend/tensorflow_backend.py:1168: calling reduce_prod (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:From /c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/keras/backend/tensorflow_backend.py:2852: calling l2_normalize (from tensorflow.python.ops.nn_impl) with dim is deprecated and will be removed in a future version.
+Instructions for updating:
+dim is deprecated, use axis instead
+WARNING:tensorflow:From /c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/keras/backend/tensorflow_backend.py:1257: calling reduce_mean (from tensorflow.python.ops.math_ops) with keep_dims is deprecated and will be removed in a future version.
+Instructions for updating:
+keep_dims is deprecated, use keepdims instead
+WARNING:tensorflow:Variable *= will be deprecated. Use variable.assign_mul if you want assignment to the variable value or 'x = x * y' if you want a new python Tensor object.
+./main.py:127: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+  exp['RANK_SCORE'] = np.mean(all_percs)
+./main.py:128: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+  exp['QUIT_LOSS'] = df_log.iloc[-1]['loss']
+./main.py:129: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+  exp['QUIT_EPOCH'] = df_log.iloc[-1]['epoch']
+./main.py:130: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+  exp['QUIT_MSE'] = df_log.iloc[-1]['mean_squared_error']
+./main.py:131: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+  exp['N_PARAMS'] = model.count_params()
+/c1/apps/anaconda/4.3.1/lib/python3.5/site-packages/pandas/core/series.py:749: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+  self.loc[key] = value
+./main.py:152: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+  exp['IS_RUN'] = 0
+train_model imported
+load_model imported
+get_rank_info imported
+predict_cosine_similarity imported
+Word2Vec imported
+WordNetLemmatizer imported
+get_similar_words imported
+nltk imported
+prepare_data imported
+sent_tokenize imported
+stopwords imported
+word_tokenize imported
+EXP_ID                       3
+N_EPOCH                    400
+PATIENCE                   100
+IS_TRAIN                     0
+LOSS_FUNC     cosine_proximity
+CP                 -0.00476829
+MSE                  0.0945493
+OUTPUT_DIM                 200
+INPUT_DIM                  200
+TIME_STEPS                   1
+MODEL_ID                LSTM_3
+IS_RUN                       1
+RANK_SCORE                 NaN
+QUIT_LOSS                  NaN
+QUIT_MSE                   NaN
+QUIT_EPOCH                 NaN
+Name: 0, dtype: object
+Activation imported
+BatchNormalization imported
+Bidirectional imported
+Conv1D imported
+Conv2D imported
+Conv2DTranspose imported
+Convolution3D imported
+Dense imported
+Dropout imported
+Embedding imported
+Flatten imported
+GaussianDropout imported
+GaussianNoise imported
+Input imported
+K imported
+LSTM imported
+Lambda imported
+LeakyReLU imported
+MaxPooling2D imported
+Model imported
+Permute imported
+RepeatVector imported
+Reshape imported
+Sequential imported
+TimeDistributed imported
+UpSampling1D imported
+UpSampling2D imported
+UpSampling3D imported
+attention_3d_block imported
+create_LSTM imported
+initializers imported
+merge imported
+regularizers imported
+0
+
+Job: Chief Financial Officer
+   Chief of Party
+   Marketing Officer
+   Shop Director
+   Preseller merchendiser
+   Secretary
+   Java Senior Developer Architect
+   Advertising Agent
+   Merchandiser, Goris
+   Receptionist
+   Java Developer
+LABEL_AT_RANKING_PERCENTAGE: 0.2329626311073631
+
+Job: Chief Financial Officer
+   Chief of Party
+   Marketing Officer
+   Shop Director
+   Preseller merchendiser
+   Secretary
+   Java Senior Developer Architect
+   Advertising Agent
+   Merchandiser, Goris
+   Receptionist
+   Java Developer
+LABEL_AT_RANKING_PERCENTAGE: 0.2329626311073631
+1
+
+Job: Full time Community Connections Intern (paid internship)
+   Chief Accountant
+   Sous Chef
+   Senior Software Developer C++
+   Government Liaison Site Logistics Coordinator
+   C C++ Software Developer
+   Senior Java Developer
+   Salesperson Cashier
+   Specialist in Marketing Department
+   Programmer Information and Communication Technologies
+   POS Terminals Servicing Division Specialist, Card Center
+LABEL_AT_RANKING_PERCENTAGE: 0.9640014757813735
+
+Job: Full time Community Connections Intern (paid internship)
+   Chief Accountant
+   Sous Chef
+   Senior Software Developer C++
+   Government Liaison Site Logistics Coordinator
+   C C++ Software Developer
+   Senior Java Developer
+   Salesperson Cashier
+   Specialist in Marketing Department
+   Programmer Information and Communication Technologies
+   POS Terminals Servicing Division Specialist, Card Center
+LABEL_AT_RANKING_PERCENTAGE: 0.9640014757813735
