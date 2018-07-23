@@ -12,5 +12,5 @@ if __name__ == '__main__':
         with open(os.path.join(CWDIR,'./experiments/.idx'),'w') as f:
             idx = f.write(str(i))
         os.system('sbatch submit_job.sh')
-        time.sleep(1)
+        time.sleep(10)
         print('The {}th job is submitted.'.format(i))

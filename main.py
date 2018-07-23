@@ -51,7 +51,7 @@ def start_exp(exp):
 	import_local_package(os.path.join(CWDIR,'./experiments/models/{}.py'.format(MODEL_ID)),[])
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
 	path_labels = os.path.join(CWDIR,'./tmp/job_titles.txt')
-	path_data = os.path.join(CWDIR,'./tmp/job_description.json')
+	path_data = os.path.join(CWDIR,'./tmp/df_texts.csv')
 	path_model = os.path.join(CWDIR,'./logs/models/LSTM_{}.model'.format(EXP_ID))
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
 	path_training_model = os.path.join(CWDIR,'./logs/LSTM_train_{}.model'.format(EXP_ID))
@@ -76,12 +76,19 @@ def start_exp(exp):
 			model_fasttext = train_fasttext(titles,path_model = path_model_fasttext)
 			labels = np.array([np.array(model_fasttext[word]) for word in titles])
 	
-	df_vectors = pd.read_csv(path_vectors)
-	labels = df_vectors.values
+	labels = pd.read_csv(path_vectors).values
+	texts = np.array([x[0] if type(x)!=str else x for x in pd.read_csv(path_data).values])
 	# prepare trainig/testing data
-	with open(path_data,'r') as f:
-		JD_ls = json.load(f)
-	texts = [x['responsibility']+' '+x['qualification'] for x in JD_ls]    
+
+	GOOD_i =[]
+	for i in range(len(texts)):
+		if len(texts[i])>=200:
+			GOOD_i.append(i)
+
+	labels = labels[GOOD_i]*100
+	texts = texts[GOOD_i]
+
+
 	tokenizer = Tokenizer()
 	tokenizer.fit_on_texts([' '.join(texts)])
 	data = tokenizer.texts_to_sequences(texts)
@@ -153,7 +160,7 @@ if __name__ == '__main__':
 		idx = int(f.read())
 	
 	exp = df_exp.iloc[idx]
-	if exp['IS_RUN']:
+	if int(exp['IS_RUN'])==1:
 		exp = start_exp(exp)
 		exp['IS_RUN'] = 0
 		df_exp.iloc[idx] = exp
