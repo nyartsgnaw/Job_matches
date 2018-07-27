@@ -91,12 +91,25 @@ def start_exp(exp):
 	tokenizer.fit_on_texts([' '.join(texts)])
 	data = tokenizer.texts_to_sequences(texts)
 	data = sequence.pad_sequences(data, padding='post',truncating='post',maxlen=INPUT_DIM) # truncate and pad input sequences
-	data_gen = sequence.TimeseriesGenerator(data, labels,
-								length=TIME_STEPS, sampling_rate=1,
-								batch_size=1)
-	
-	X = np.array([data_gen[i][0][0] for i in range(len(data_gen))])
-	Y = np.array([data_gen[i][1][0] for i in range(len(data_gen))])
+	try:
+		data_gen = sequence.TimeseriesGenerator(data, labels,
+									length=TIME_STEPS, sampling_rate=1,
+									batch_size=1,start_index=int(TIME_STEPS/2))
+		
+		X = np.array([data_gen[i][0][0] for i in range(len(data_gen))])
+		Y = np.array([data_gen[i][1][0] for i in range(len(data_gen))])
+	except:
+		def TimeseriesGenerator(data,targets,length=10,start_index=0):
+			i = start_index 
+			X,Y = [],[]
+			while i<len(data)-length+start_index:
+				X.append(data[i-start_index:i+length-start_index])
+				Y.append(targets[i-start_index:i+length-start_index])
+				i+=1
+			X = np.array(X)
+			Y = np.array(Y)
+			return X,Y
+		X,Y = TimeseriesGenerator(data, labels, length=TIME_STEPS, start_index=int(TIME_STEPS/2))		
 
 	X_train, X_test = train_test_split(X,train_size=0.8)
 	Y_train, Y_test = train_test_split(Y,train_size=0.8)
