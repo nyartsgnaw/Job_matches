@@ -119,7 +119,7 @@ def start_exp(exp):
 		from keras.optimizers import SGD, Adam, RMSprop
 		adam=Adam(lr=0.005, beta_1=0.9 ,decay=0.001)
 		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
-		model = train_model(model,X_train=X_train.reshape([-1,INPUT_DIM,TIME_STEPS,1]),\
+		model = train_model(model,X_train=X_train.reshape([-1,1,TIME_STEPS,INPUT_DIM]),\
 							Y_train=Y_train,\
 							verbose=1,n_epoch=N_EPOCH,validation_split=0,patience=PATIENCE,
 							model_path=path_training_model,

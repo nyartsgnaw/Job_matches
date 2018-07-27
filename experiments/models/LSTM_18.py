@@ -62,7 +62,7 @@ def create_LSTM(input_dim,output_dim,time_steps=10,embedding_matrix=[]):
 #    x = BatchNormalization()(x)
 #    x = Dense(256, activation='tanh')(x)
     x = Dense(output_dim, activation='tanh')(x)
-    model = Model(input=[inputs], output=x)
+    model = Model(input=inputs, output=x)
     print(model.summary())
     return model
 
