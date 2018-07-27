@@ -37,7 +37,7 @@ def create_LSTM(input_dim,output_dim,time_steps=1,embedding_matrix=[]):
         x = embedding_layer(inputs)
         x = Reshape([input_dim,embedding_matrix.shape[1]])(x)
     else:
-        x = Reshape([input_dim,1,])(inputs)
+        x = Reshape([input_dim,time_steps,])(inputs)
 
     x = Bidirectional(LSTM(256, return_sequences=True))(x)
     x = BatchNormalization()(x)
