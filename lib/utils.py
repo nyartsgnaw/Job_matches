@@ -84,7 +84,7 @@ def load_embedding():
 
 def get_rank_df(yhat,titles_test,Y,titles_all):
 	from sklearn.metrics.pairwise import cosine_similarity
-	sim_score = cosine_similarity(yhat,Y)
+	sim_score = cosine_similarity(yhat[:10],Y)
 	outputs = []
 	for idx in range(sim_score.shape[0]):
 		rank_dict = {}

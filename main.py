@@ -56,9 +56,11 @@ def start_exp(exp):
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
 	path_training_model = os.path.join(CWDIR,'./logs/models/LSTM_train_{}.model'.format(EXP_ID))
 	path_training_log = os.path.join(CWDIR,'./logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID))
-	if os.path.isfile(path_training_log):
-		os.remove(path_training_log)
+#	if os.path.isfile(path_training_log):
+#		os.remove(path_training_log)
 	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/eval/')))
+	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/models/')))
+	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/train_logs/')))
 	# fix random seed for reproducibility
 	np.random.seed(7)
 	path_data = os.path.join(CWDIR,'./data/df_all.csv')
@@ -106,7 +108,7 @@ def start_exp(exp):
 		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
 		model = train_model(model,X_train=X_train.reshape([-1,1,TIME_STEPS,INPUT_DIM]),\
 							Y_train=Y_train,\
-							verbose=1,n_epoch=N_EPOCH,validation_split=0.1,patience=PATIENCE,\
+							verbose=1,n_epoch=2,validation_split=0.1,patience=PATIENCE,\
 							model_path=path_training_model,
 							log_path=path_training_log)
 		model.save(path_model)

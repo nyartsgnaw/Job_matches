@@ -137,6 +137,7 @@ if __name__ == '__main__':
 	path_fasttext = os.path.join(CWDIR,'./../../fastText-0.1.0/fasttext')
 	path_model_fasttext = os.path.join(CWDIR,'./../logs/models/job_title_fasttext')
 	import_local_package(os.path.join(CWDIR,'./../lib/train_fasttext.py'),['train_fasttext','train_fasttext2'])
+	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./../logs/models/')))
 	if os.path.isfile(path_fasttext):
 		print('Start training fasttext in Linux environment...')
 		df_vectors,labels = train_fasttext2(df_all['titles'].values,path_model = path_model_fasttext ,vector_dim=OUTPUT_DIM,path_fasttext=path_fasttext,path_output_csv=path_vectors)
