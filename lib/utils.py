@@ -10,7 +10,9 @@ try:
 	CWDIR = os.path.abspath(os.path.dirname(__file__))
 except:
 	CWDIR = os.getcwd()	
-	
+
+from keras import backend as K
+import tensorflow as tf
 num_cores = 16
 GPU = True
 if GPU:
