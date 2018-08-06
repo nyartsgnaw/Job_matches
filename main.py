@@ -1,6 +1,5 @@
 from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
-from keras.utils import to_categorical
 import numpy as np 
 import pandas as pd
 import json
@@ -10,6 +9,10 @@ try:
 	CWDIR = os.path.abspath(os.path.dirname(__file__))
 except:
 	CWDIR = os.getcwd()	
+
+from keras import metrics
+from keras.optimizers import SGD, Adam, RMSprop
+pd.options.mode.chained_assignment = None  # default='warn'
 
 def import_local_package(addr_pkg,function_list=[]):
 	#import local package by address
@@ -103,12 +106,11 @@ def start_exp(exp):
  #       model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,embedding_matrix=embedding_matrix)
 		model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,time_steps=TIME_STEPS,embedding_matrix=embedding_matrix)
 	if TRAIN_MODEL == True:
-		from keras.optimizers import SGD, Adam, RMSprop
 		adam=Adam(lr=0.005, beta_1=0.9 ,decay=0.001)
 		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
 		model = train_model(model,X_train=X_train.reshape([-1,1,TIME_STEPS,INPUT_DIM]),\
 							Y_train=Y_train,\
-							verbose=1,n_epoch=2,validation_split=0.1,patience=PATIENCE,\
+							verbose=1,n_epoch=N_EPOCH,validation_split=0.1,patience=PATIENCE,\
 							model_path=path_training_model,
 							log_path=path_training_log)
 		model.save(path_model)

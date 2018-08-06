@@ -1,5 +1,7 @@
 import operator
 from keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger
+#from keras.utils import to_categorical
+
 import pandas as pd
 import numpy as np 
 import re
@@ -8,6 +10,21 @@ try:
 	CWDIR = os.path.abspath(os.path.dirname(__file__))
 except:
 	CWDIR = os.getcwd()	
+	
+num_cores = 16
+GPU = True
+if GPU:
+    num_GPU = 1
+    num_CPU = 1
+else:
+    num_CPU = 1
+    num_GPU = 0
+config = tf.ConfigProto(intra_op_parallelism_threads=num_cores,\
+        inter_op_parallelism_threads=num_cores, allow_soft_placement=True,\
+		log_device_placement=False,\
+        device_count = {'CPU' : num_CPU, 'GPU' : num_GPU})
+K.set_session(tf.Session(config=config))
+
 def train_model(model,\
 		X_train,Y_train,\
 		n_epoch =  200,\
