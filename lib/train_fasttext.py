@@ -24,7 +24,7 @@ def import_local_package(addr_pkg,function_list=[]):
 			print("{} imported".format(_f))
 
 	return
-import_local_package(os.path.join(CWDIR,'./prepare_data.py'),['prepare_data'])
+import_local_package(os.path.join(CWDIR,'./../data/lib/prepare_data.py'),['prepare_data'])
 
 
 def train_fasttext(texts,path_model,vector_dim=200):
@@ -37,7 +37,7 @@ def train_fasttext(texts,path_model,vector_dim=200):
 		tmp = ' '.join(tmp.split())
 		labels.append(tmp)
 	
-	path_data = os.path.join(CWDIR,'./../tmp/tmp.txt')
+	path_data = os.path.join(CWDIR,'./../data/tmp/tmp.txt')
 	path_model = path_model.replace('.bin','')
 	
 
@@ -61,7 +61,7 @@ def train_fasttext2(texts,path_model,vector_dim=VECTOR_DIM,path_fasttext='./../.
 #   vector_dim = 200
 #   path_model = os.path.join(CWDIR,'./../models/job_title_fasttext')
 #   path_fasttext = os.path.join(CWDIR,'./../../fastText-0.1.0/fasttext')
-	path_data = os.path.join(CWDIR,'./../tmp/job_titles.txt')
+	path_data = os.path.join(CWDIR,'./../data/tmp/job_titles.txt')
 	path_vector_JD = os.path.join(CWDIR,'./../logs/models/vectors_JT-{}.txt'.format(vector_dim))
 	path_model = path_model.replace('.bin','')
 

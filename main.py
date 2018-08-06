@@ -2,7 +2,6 @@ from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
 import numpy as np 
-from sklearn.model_selection import train_test_split
 import pandas as pd
 import json
 import os
@@ -31,7 +30,7 @@ def import_local_package(addr_pkg,function_list=[]):
 
 	return
 import_local_package(os.path.join(CWDIR,'./lib/utils.py'),['train_model','load_model','get_rank_info','predict_cosine_similarity'])
-import_local_package(os.path.join(CWDIR,'./lib/prepare_data.py'),[])
+import_local_package(os.path.join(CWDIR,'./data/lib/prepare_data.py'),[])
 
 
 
@@ -46,12 +45,13 @@ def start_exp(exp):
 	TRAIN_MODEL = int(exp['IS_TRAIN'])
 	LOSS=exp['LOSS_FUNC']
 	print(exp)
-	
+
+	path_titles = os.path.join(CWDIR,'./data/tmp/job_titles.txt')
+	path_data = os.path.join(CWDIR,'./data/tmp/df_texts.csv')
+
 
 	import_local_package(os.path.join(CWDIR,'./experiments/models/{}.py'.format(MODEL_ID)),[])
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
-	path_labels = os.path.join(CWDIR,'./tmp/job_titles.txt')
-	path_data = os.path.join(CWDIR,'./tmp/df_texts.csv')
 	path_model = os.path.join(CWDIR,'./logs/models/LSTM_{}.model'.format(EXP_ID))
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
 	path_training_model = os.path.join(CWDIR,'./logs/LSTM_train_{}.model'.format(EXP_ID))
@@ -59,10 +59,14 @@ def start_exp(exp):
 	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/eval/')))
 	# fix random seed for reproducibility
 	np.random.seed(7)
-	# get embeddings
-	with open(path_labels,'r') as f:
-		titles = [x.replace('\n','') for x in f.readlines()]
 
+	texts = np.array([x[0] if type(x)!=str else x for x in pd.read_csv(path_data).values])
+	# get embeddings
+	with open(path_titles,'r') as f:
+		titles = [x.replace('\n','').lower() for x in f.readlines()]
+	titles = np.array(titles)[GOOD_i]
+
+	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
 	if not os.path.isfile(path_vectors):
 		print('Warning: fasfttext model wasn\'t found, start retraining...')
 		path_fasttext = os.path.join(CWDIR,'./../fastText-0.1.0/fasttext')
@@ -77,45 +81,24 @@ def start_exp(exp):
 			labels = np.array([np.array(model_fasttext[word]) for word in titles])
 	
 	labels = pd.read_csv(path_vectors).values
-	texts = np.array([x[0] if type(x)!=str else x for x in pd.read_csv(path_data).values])
 	# prepare trainig/testing data
-
-	GOOD_i =[]
-	for i in range(len(texts)):
-		if len(texts[i])>=200:
-			GOOD_i.append(i)
-
 	labels = labels[GOOD_i]
-	texts = texts[GOOD_i]
+
+
+	#get rid of the short ones
+	
 	tokenizer = Tokenizer()
 	tokenizer.fit_on_texts([' '.join(texts)])
 	data = tokenizer.texts_to_sequences(texts)
 	data = sequence.pad_sequences(data, padding='post',truncating='post',maxlen=INPUT_DIM) # truncate and pad input sequences
-	try:
-		data_gen = sequence.TimeseriesGenerator(data, labels,
-									length=TIME_STEPS, sampling_rate=1,
-									batch_size=1,start_index=int(TIME_STEPS/2))
-		
-		X = np.array([data_gen[i][0][0] for i in range(len(data_gen))])
-		Y = np.array([data_gen[i][1][0] for i in range(len(data_gen))])
-	except:
-		def TimeseriesGenerator(data,targets,length=10,start_index=0):
-			i = start_index 
-			X,Y = [],[]
-			while i<len(data)-length+start_index:
-				X.append(data[i-start_index:i+length-start_index])
-				Y.append(targets[i-start_index:i+length-start_index])
-				i+=1
-			X = np.array(X)
-			Y = np.array(Y)
-			return X,Y
-		X,Y = TimeseriesGenerator(data, labels, length=TIME_STEPS, start_index=int(TIME_STEPS/2))		
 
-	X_train, X_test = train_test_split(X,train_size=0.8)
-	Y_train, Y_test = train_test_split(Y,train_size=0.8)
+	#make data series	
+	X_train_idx, Y_train_idx = get_time_series(range(len(train_idx)),range(len(train_idx)),TIME_STEPS,0)
+	X_test_idx, Y_test_idx = get_time_series(range(len(test_idx)),range(len(test_idx)),TIME_STEPS,0)
 
-
-
+	X_train,Y_train = data[train_idx][X_train_idx], labels[train_idx][Y_train_idx]
+	X_test,Y_test = data[test_idx][X_test_idx], labels[test_idx][Y_test_idx]
+	
 
 	# create the model    
 	from keras.models import load_model

@@ -1,6 +1,5 @@
 import operator
 from keras.callbacks import EarlyStopping, ModelCheckpoint, CSVLogger
-from nltk.corpus import wordnet as wn
 import numpy as np 
 import re
 import os
@@ -80,9 +79,12 @@ def load_embedding():
 			embedding_weights[i] = embedding_vector
 	return embedding_weights
 
-with open(os.path.join(CWDIR,'./../tmp/job_titles.txt'),'r') as f:
-	titles = [x.replace('\n','') for x in f.readlines()]
 
+
+
+
+with open(os.path.join(CWDIR,'./../data/tmp/job_titles.txt'),'r') as f:
+	titles = [x.replace('\n','') for x in f.readlines()]
 
 from sklearn.metrics.pairwise import cosine_similarity
 def predict_cosine_similarity(model,idx,X,Y):
