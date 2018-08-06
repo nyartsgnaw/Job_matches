@@ -1,0 +1,105 @@
+train_model imported
+load_model imported
+get_rank_df imported
+Word2Vec imported
+WordNetLemmatizer imported
+get_similar_words imported
+get_time_series imported
+nltk imported
+prepare_data imported
+remove_stopwords imported
+sent_tokenize imported
+stopwords imported
+wn imported
+word_tokenize imported
+EXP_ID                      23
+N_EPOCH                    400
+PATIENCE                   100
+IS_TRAIN                     1
+LOSS_FUNC     cosine_proximity
+OUTPUT_DIM                 200
+INPUT_DIM                  200
+TIME_STEPS                   1
+MODEL_ID               LSTM_16
+IS_RUN                       1
+RANK_SCORE                 NaN
+QUIT_LOSS                  NaN
+QUIT_MSE                   NaN
+QUIT_EPOCH                 NaN
+N_PARAMS                   NaN
+note                       NaN
+Name: 20, dtype: object
+Activation imported
+BatchNormalization imported
+Bidirectional imported
+Conv1D imported
+Conv2D imported
+Conv2DTranspose imported
+Convolution3D imported
+Dense imported
+Dropout imported
+Embedding imported
+Flatten imported
+GaussianDropout imported
+GaussianNoise imported
+Input imported
+K imported
+LSTM imported
+Lambda imported
+LeakyReLU imported
+MaxPooling2D imported
+Model imported
+Permute imported
+RepeatVector imported
+Reshape imported
+Sequential imported
+TimeDistributed imported
+UpSampling1D imported
+UpSampling2D imported
+UpSampling3D imported
+attention_3d_block imported
+create_LSTM imported
+initializers imported
+merge imported
+regularizers imported
+____________________________________________________________________________________________________
+Layer (type)                     Output Shape          Param #     Connected to                     
+====================================================================================================
+input_1 (InputLayer)             (None, 200, 1, 1)     0                                            
+____________________________________________________________________________________________________
+reshape_1 (Reshape)              (None, 200, 1)        0           input_1[0][0]                    
+____________________________________________________________________________________________________
+lstm_1 (LSTM)                    (None, 200, 200)      161600      reshape_1[0][0]                  
+____________________________________________________________________________________________________
+batch_normalization_1 (BatchNorm (None, 200, 200)      800         lstm_1[0][0]                     
+____________________________________________________________________________________________________
+activation_1 (Activation)        (None, 200, 200)      0           batch_normalization_1[0][0]      
+____________________________________________________________________________________________________
+lstm_2 (LSTM)                    (None, 200, 200)      320800      activation_1[0][0]               
+____________________________________________________________________________________________________
+batch_normalization_2 (BatchNorm (None, 200, 200)      800         lstm_2[0][0]                     
+____________________________________________________________________________________________________
+activation_2 (Activation)        (None, 200, 200)      0           batch_normalization_2[0][0]      
+____________________________________________________________________________________________________
+permute_1 (Permute)              (None, 200, 200)      0           activation_2[0][0]               
+____________________________________________________________________________________________________
+dense_1 (Dense)                  (None, 200, 200)      40200       permute_1[0][0]                  
+____________________________________________________________________________________________________
+attention_vec (Permute)          (None, 200, 200)      0           dense_1[0][0]                    
+____________________________________________________________________________________________________
+attention_mul (Merge)            (None, 200, 200)      0           activation_2[0][0]               
+                                                                   attention_vec[0][0]              
+____________________________________________________________________________________________________
+lstm_3 (LSTM)                    (None, 200)           320800      attention_mul[0][0]              
+____________________________________________________________________________________________________
+batch_normalization_3 (BatchNorm (None, 200)           800         lstm_3[0][0]                     
+____________________________________________________________________________________________________
+activation_3 (Activation)        (None, 200)           0           batch_normalization_3[0][0]      
+____________________________________________________________________________________________________
+dense_2 (Dense)                  (None, 200)           40200       activation_3[0][0]               
+====================================================================================================
+Total params: 886,000
+Trainable params: 884,800
+Non-trainable params: 1,200
+____________________________________________________________________________________________________
+None
