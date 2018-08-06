@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import json
 import os
+import datetime
 try:
 	CWDIR = os.path.abspath(os.path.dirname(__file__))
 except:
@@ -35,6 +36,7 @@ import_local_package(os.path.join(CWDIR,'./data/lib/prepare_data.py'),[])
 
 
 def start_exp(exp):
+	start_time = datetime.datetime.now()
 	EXP_ID = exp['EXP_ID'] #the name for this experiment 
 	MODEL_ID = exp['MODEL_ID'] #model framework
 	OUTPUT_DIM = int(exp['OUTPUT_DIM']) # LSTM output vector dimension, should match that of Word2Vec of labels
@@ -54,6 +56,8 @@ def start_exp(exp):
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
 	path_training_model = os.path.join(CWDIR,'./logs/LSTM_train_{}.model'.format(EXP_ID))
 	path_training_log = os.path.join(CWDIR,'./logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID))
+	if os.path.isfile(path_training_log):
+		os.remove(path_training_log)
 	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/eval/')))
 	# fix random seed for reproducibility
 	np.random.seed(7)
@@ -119,12 +123,15 @@ def start_exp(exp):
 #	df = get_rank_df(yhat,titles_test,Y_test,titles_test)
 	df.to_csv(path_eval,index=False)
 
-	df_log = pd.read_csv(path_training_log)
+	exp['start_time'] = str(start_time.replace(microsecond=0))
+	exp['end_time'] = str(datetime.datetime.now().replace(microsecond=0))
+
 	try:
 		exp['RANK_SCORE'] = df['rank'].mean()
 	except Exception as e:
 		print(e)
 	try:
+		df_log = pd.read_csv(path_training_log)
 		exp['QUIT_LOSS'] = df_log.iloc[-1]['loss']
 		exp['QUIT_EPOCH'] = df_log.iloc[-1]['epoch']
 		exp['QUIT_MSE'] = df_log.iloc[-1]['mean_squared_error']

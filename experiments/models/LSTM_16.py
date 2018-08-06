@@ -26,7 +26,9 @@ def attention_3d_block(inputs,input_dim,is_single_attention_vector=False):
     return output_attention_mul
 
 def create_LSTM(input_dim,output_dim,time_steps=1,embedding_matrix=[]):
-    inputs = Input(shape=(input_dim,time_steps, 1,))
+    batch_size = 1
+    # inputs.shape = (batch_size, time_steps, input_dim)
+    inputs = Input(shape=(batch_size,time_steps, input_dim))
     if embedding_matrix != []:
         embedding_layer = Embedding(embedding_matrix.shape[0],
                                     embedding_matrix.shape[1],
