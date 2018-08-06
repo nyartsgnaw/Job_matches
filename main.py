@@ -54,7 +54,7 @@ def start_exp(exp):
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
 	path_model = os.path.join(CWDIR,'./logs/models/LSTM_{}.model'.format(EXP_ID))
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
-	path_training_model = os.path.join(CWDIR,'./logs/LSTM_train_{}.model'.format(EXP_ID))
+	path_training_model = os.path.join(CWDIR,'./logs/models/LSTM_train_{}.model'.format(EXP_ID))
 	path_training_log = os.path.join(CWDIR,'./logs/train_logs/LSTM_logs{}.csv'.format(EXP_ID))
 	if os.path.isfile(path_training_log):
 		os.remove(path_training_log)
@@ -156,6 +156,7 @@ if __name__ == '__main__':
 	if int(exp['IS_RUN'])==1:
 		exp = start_exp(exp)
 		exp['IS_RUN'] = 0
+		df_exp = pd.read_excel(path_exp) #re-read the dataframe because multiple threads are handling the program simultaneously 
 		df_exp.iloc[idx] = exp
 		df_exp.to_excel(path_exp,index=False)
 
