@@ -46,8 +46,6 @@ def start_exp(exp):
 	LOSS=exp['LOSS_FUNC']
 	print(exp)
 
-	path_titles = os.path.join(CWDIR,'./data/tmp/job_titles.txt')
-	path_data = os.path.join(CWDIR,'./data/tmp/df_texts.csv')
 
 
 	import_local_package(os.path.join(CWDIR,'./experiments/models/{}.py'.format(MODEL_ID)),[])
@@ -59,45 +57,34 @@ def start_exp(exp):
 	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/eval/')))
 	# fix random seed for reproducibility
 	np.random.seed(7)
+	path_data = os.path.join(CWDIR,'./data/df_all.csv')
 
-	texts = np.array([x[0] if type(x)!=str else x for x in pd.read_csv(path_data).values])
-	# get embeddings
-	with open(path_titles,'r') as f:
-		titles = [x.replace('\n','').lower() for x in f.readlines()]
-	titles = np.array(titles)[GOOD_i]
 
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
 	if not os.path.isfile(path_vectors):
-		print('Warning: fasfttext model wasn\'t found, start retraining...')
-		path_fasttext = os.path.join(CWDIR,'./../fastText-0.1.0/fasttext')
-		path_model_fasttext = os.path.join(CWDIR,'./logs/models/job_title_fasttext')
-		import_local_package(os.path.join(CWDIR,'./lib/train_fasttext.py'),['train_fasttext','train_fasttext2'])
-		if os.path.isfile(path_fasttext):
-			print('Start training fasttext in Linux environment...')
-			df_vectors,labels = train_fasttext2(titles,path_model = path_model_fasttext ,vector_dim=OUTPUT_DIM,path_fasttext=path_fasttext,path_output_csv=path_vectors)
-		else:
-			print('Start training fasttext in Python environment...')
-			model_fasttext = train_fasttext(titles,path_model = path_model_fasttext)
-			labels = np.array([np.array(model_fasttext[word]) for word in titles])
-	
+		os.system('python {}'.format(os.path.join(CWDIR,'./lib/train_fasttext.py')))
+
 	labels = pd.read_csv(path_vectors).values
 	# prepare trainig/testing data
-	labels = labels[GOOD_i]
 
-
+	df_all = pd.read_csv(path_data)
+	judge = (df_all['split']=='train').values
 	#get rid of the short ones
 	
 	tokenizer = Tokenizer()
-	tokenizer.fit_on_texts([' '.join(texts)])
-	data = tokenizer.texts_to_sequences(texts)
+	tokenizer.fit_on_texts([' '.join(df_all['texts'])])
+	data = tokenizer.texts_to_sequences(df_all['texts'])
 	data = sequence.pad_sequences(data, padding='post',truncating='post',maxlen=INPUT_DIM) # truncate and pad input sequences
 
-	#make data series	
-	X_train_idx, Y_train_idx = get_time_series(range(len(train_idx)),range(len(train_idx)),TIME_STEPS,0)
-	X_test_idx, Y_test_idx = get_time_series(range(len(test_idx)),range(len(test_idx)),TIME_STEPS,0)
+	train_data = data[judge]
+	test_data = data[~judge]
+	train_labels = data[judge]
+	test_labels = data[~judge]
 
-	X_train,Y_train = data[train_idx][X_train_idx], labels[train_idx][Y_train_idx]
-	X_test,Y_test = data[test_idx][X_test_idx], labels[test_idx][Y_test_idx]
+	#make data series	
+	X_train, Y_train = get_time_series(train_data,train_labels,TIME_STEPS,0)
+	X_test, Y_test = get_time_series(test_data,test_labels,TIME_STEPS,0)
+
 	
 
 	# create the model    
