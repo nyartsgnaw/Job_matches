@@ -102,25 +102,26 @@ def start_exp(exp):
 		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
 		model = train_model(model,X_train=X_train.reshape([-1,1,TIME_STEPS,INPUT_DIM]),\
 							Y_train=Y_train,\
-							verbose=1,n_epoch=N_EPOCH,validation_split=0.1,patience=PATIENCE,\
+							verbose=1,n_epoch=2,validation_split=0.1,patience=PATIENCE,\
 							model_path=path_training_model,
 							log_path=path_training_log)
 		model.save(path_model)
 	
 	yhat = model.predict(X_test.reshape([-1,1,TIME_STEPS,INPUT_DIM]))
+	titles_all = df_all.titles.values
 	titles_test = titles_all[~judge]
 	Y = np.concatenate([Y_test,Y_train])
-	titles_all = df_all.titles.values
 
 
 
 	#evaluate the model
 	df = get_rank_df(yhat,titles_test,Y,titles_all)
+#	df = get_rank_df(yhat,titles_test,Y_test,titles_test)
 	df.to_csv(path_eval,index=False)
 
 	df_log = pd.read_csv(path_training_log)
 	try:
-		exp['RANK_SCORE'] = np.mean(all_percs)
+		exp['RANK_SCORE'] = df['rank'].mean()
 	except Exception as e:
 		print(e)
 	try:
