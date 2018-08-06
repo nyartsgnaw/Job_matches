@@ -1,6 +1,11 @@
+
+import numpy as np 
+from numpy.random import seed
+seed(1)
+from tensorflow import set_random_seed
+set_random_seed(2)
 from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer
-import numpy as np 
 import pandas as pd
 import json
 import os
