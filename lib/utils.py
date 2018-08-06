@@ -81,40 +81,31 @@ def load_embedding():
 
 
 
-
-
-with open(os.path.join(CWDIR,'./../data/tmp/job_titles.txt'),'r') as f:
-	titles = [x.replace('\n','') for x in f.readlines()]
-
-from sklearn.metrics.pairwise import cosine_similarity
-def predict_cosine_similarity(model,idx,X,Y):
-	yhat = model.predict(X[idx].reshape([-1,X.shape[1],1,1]))
-	return cosine_similarity(yhat,Y)
-
-
-
-def get_rank_info(model,idx,X,Y):
-	sim_score = predict_cosine_similarity(model,idx,X,Y)
-	rank_dict = {}
-	for i in range(len(sim_score[0])):
-		rank_dict[i] = sim_score[0][i]
-
-	sorted_dict = sorted(rank_dict.items(),key=operator.itemgetter(1),reverse=True)
-	
-	ranks = []
-	print()
-	print('Job:',titles[idx])
-	for k,v in sorted_dict[:10]:
-		print('  ',titles[k])
-		ranks.append(titles[k])
-
-	i = 0
-	while i <len(sorted_dict):
-		k,v = sorted_dict[i]
-		if k == idx:
-			print('LABEL_AT_RANKING_PERCENTAGE:',i/len(sorted_dict))
-			break
-		i+=1
-	return {'rank_idx_correct':i/len(sorted_dict),'top10':{titles[idx]:ranks}}
-
-
+def get_rank_df(yhat,titles_test,Y,titles_all):
+	from sklearn.metrics.pairwise import cosine_similarity
+	sim_score = cosine_similarity(yhat,Y)
+	outputs = []
+	for idx in range(sim_score.shape[0]):
+		rank_dict = {}
+		for j in range(sim_score.shape[1]):
+			rank_dict[idx,j] = sim_score[idx][j]
+		sorted_dict = sorted(rank_dict.items(),key=operator.itemgetter(1),reverse=True)
+		rank_seqs = []
+		i = 0
+		print()
+		print('Job:',titles_test[idx])
+		while i <len(sorted_dict):
+			k,v = sorted_dict[i]
+			idx,j =k
+			if i<10:
+				print('  ',titles_all[j])
+				rank_seqs.append(titles_all[j])
+			if j == idx:
+				rank = i/len(sorted_dict)
+				print('Rank of {}: {}'.format(idx,rank))
+				break
+			i+=1
+		output = [titles_test[idx]]+[rank] + rank_seqs
+		outputs.append(output)
+	df = pd.DataFrame(outputs,columns=['label']+['rank']+list(range(10)))
+	return df

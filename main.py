@@ -29,7 +29,7 @@ def import_local_package(addr_pkg,function_list=[]):
 			print("{} imported".format(_f))
 
 	return
-import_local_package(os.path.join(CWDIR,'./lib/utils.py'),['train_model','load_model','get_rank_info','predict_cosine_similarity'])
+import_local_package(os.path.join(CWDIR,'./lib/utils.py'),['train_model','load_model','get_rank_df'])
 import_local_package(os.path.join(CWDIR,'./data/lib/prepare_data.py'),[])
 
 
@@ -68,7 +68,6 @@ def start_exp(exp):
 	# prepare trainig/testing data
 
 	df_all = pd.read_csv(path_data)
-	judge = (df_all['split']=='train').values
 	#get rid of the short ones
 	
 	tokenizer = Tokenizer()
@@ -76,10 +75,11 @@ def start_exp(exp):
 	data = tokenizer.texts_to_sequences(df_all['texts'])
 	data = sequence.pad_sequences(data, padding='post',truncating='post',maxlen=INPUT_DIM) # truncate and pad input sequences
 
+	judge = (df_all['split']=='train').values
 	train_data = data[judge]
 	test_data = data[~judge]
-	train_labels = data[judge]
-	test_labels = data[~judge]
+	train_labels = labels[judge]
+	test_labels = labels[~judge]
 
 	#make data series	
 	X_train, Y_train = get_time_series(train_data,train_labels,TIME_STEPS,0)
@@ -102,26 +102,20 @@ def start_exp(exp):
 		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
 		model = train_model(model,X_train=X_train.reshape([-1,1,TIME_STEPS,INPUT_DIM]),\
 							Y_train=Y_train,\
-							verbose=1,n_epoch=N_EPOCH,validation_split=0,patience=PATIENCE,
+							verbose=1,n_epoch=N_EPOCH,validation_split=0.1,patience=PATIENCE,\
 							model_path=path_training_model,
 							log_path=path_training_log)
 		model.save(path_model)
+	
+	yhat = model.predict(X_test.reshape([-1,1,TIME_STEPS,INPUT_DIM]))
+	titles_test = titles_all[~judge]
+	Y = np.concatenate([Y_test,Y_train])
+	titles_all = df_all.titles.values
+
+
 
 	#evaluate the model
-	all_percs = [] #rank of true label in the queue of sorted job titles by cosine similarity
-	all_top10 = [] #top10 job titles prediction 
-	i= 0 
-	while i < len(X_test):
-#	while i < 2:
-		print(i)
-		all_percs.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['rank_idx_correct'])
-		all_top10.append(get_rank_info(model,i,X_test,np.concatenate([Y_test,Y_train]))['top10'])
-		i+=1    
-	ls1 = []
-	for x in all_top10:
-		for k,v in x.items():
-			ls1.append([k]+list(v))
-	df = pd.concat([pd.DataFrame(ls1,columns=['label']+list(range(10))),pd.DataFrame(all_percs, columns=['rank_percentage'])],axis=1)
+	df = get_rank_df(yhat,titles_test,Y,titles_all)
 	df.to_csv(path_eval,index=False)
 
 	df_log = pd.read_csv(path_training_log)

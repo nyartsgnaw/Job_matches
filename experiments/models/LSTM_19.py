@@ -40,17 +40,8 @@ def create_LSTM(input_dim,output_dim,time_steps=10,embedding_matrix=[]):
     else:
         x = Reshape([time_steps,input_dim])(inputs)
     
-    x = LSTM(200,return_sequences=True)(x)
-#    x = Bidirectional(LSTM(128, return_sequences=True))(x)
-    x = BatchNormalization()(x)
-    x = Activation('relu')(x)
-
 #    x = LSTM(200,return_sequences=True)(x)
-#    x = Bidirectional(LSTM(128, return_sequences=True))(x)
-#    x = BatchNormalization()(x)
-#    x = Activation('relu')(x)
-
-    x = attention_3d_block(x,input_dim=200)
+    x = Bidirectional(LSTM(100, return_sequences=True))(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
 
@@ -60,11 +51,22 @@ def create_LSTM(input_dim,output_dim,time_steps=10,embedding_matrix=[]):
 #    x = Activation('relu')(x)
 
 
-    #LSTM OUT
-    x = LSTM(200)(x)
-#    x = Bidirectional(LSTM(128, return_sequences=True))(x)
+    x = attention_3d_block(x,input_dim=200)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
+
+
+#    x = LSTM(200,return_sequences=True)(x)
+#    x = Bidirectional(LSTM(100, return_sequences=True))(x)
+#    x = BatchNormalization()(x)
+#    x = Activation('relu')(x)
+
+    #LSTM OUT
+#    x = LSTM(200)(x)
+    x = Bidirectional(LSTM(150))(x)
+    x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+
 
     #NN OUT
 #    x = Flatten()(x)
