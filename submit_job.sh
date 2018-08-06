@@ -21,6 +21,7 @@ module load anaconda/4.3.1 cuda/toolkit/9.0 cuda/libs/cudnn-7005
 
 source /c1/libs/glibc/2.17/site-packages/bin/activate;
 
+#/c1/libs/glibc/2.17/lib/x86_64-linux-gnu/ld-2.17.so --library-path /c1/libs/glibc/2.17/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH:/usr/lib /c1/apps/anaconda/4.3.1/bin/python ./test.py;
 #/c1/libs/glibc/2.17/lib/x86_64-linux-gnu/ld-2.17.so --library-path /c1/libs/glibc/2.17/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH:/usr/lib /c1/apps/anaconda/4.3.1/bin/python ./lib/train_fasttext2.py;
 /c1/libs/glibc/2.17/lib/x86_64-linux-gnu/ld-2.17.so --library-path /c1/libs/glibc/2.17/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH:/usr/lib /c1/apps/anaconda/4.3.1/bin/python ./main.py;
 #/c1/libs/glibc/2.17/lib/x86_64-linux-gnu/ld-2.17.so --library-path /c1/libs/glibc/2.17/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH:/usr/lib /c1/apps/anaconda/4.3.1/bin/python ./analysis/compare/testGAN/init_exp_logs.py;
