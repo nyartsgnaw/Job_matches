@@ -7780,7 +7780,6 @@ radio optimization senior engineer
 teller operator
 core ip engineer
 ps cs engineer
-senior java software developer
 credit officer
 support testing engineer
 software development engineer
@@ -15754,7 +15753,6 @@ linux server administrator
 merchandiser
 sports coordinator
 executive director
-mid level front end developer
 senior back end developer
 senior software developer
 production manager

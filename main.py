@@ -44,6 +44,7 @@ import_local_package(os.path.join(CWDIR,'./data/lib/prepare_data.py'),[])
 
 
 def start_exp(exp):
+	# setup model parameters
 	start_time = datetime.datetime.now()
 	EXP_ID = exp['EXP_ID'] #the name for this experiment 
 	MODEL_ID = exp['MODEL_ID'] #model framework
@@ -55,10 +56,9 @@ def start_exp(exp):
 	TRAIN_MODEL = int(exp['IS_TRAIN'])
 	LOSS=exp['LOSS_FUNC']
 	print(exp)
-
-
-
 	import_local_package(os.path.join(CWDIR,'./experiments/models/{}.py'.format(MODEL_ID)),[])
+
+	# setup logging address
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
 	path_model = os.path.join(CWDIR,'./logs/models/LSTM_{}.model'.format(EXP_ID))
 	path_eval = os.path.join(CWDIR,'./logs/eval/LSTM_eval_{}.csv'.format(EXP_ID))
@@ -71,37 +71,38 @@ def start_exp(exp):
 	os.system('mkdir -p {}'.format(os.path.join(CWDIR,'./logs/train_logs/')))
 	# fix random seed for reproducibility
 	np.random.seed(7)
-	path_data = os.path.join(CWDIR,'./data/df_all.csv')
 
-
+	# read the label Ys
 	path_vectors = os.path.join(CWDIR,'./logs/models/vectors_JT-{}.csv'.format(INPUT_DIM))
 	if not os.path.isfile(path_vectors):
 		os.system('python {}'.format(os.path.join(CWDIR,'./lib/train_fasttext.py')))
 
 	labels = pd.read_csv(path_vectors).values
-	# prepare trainig/testing data
 
+	# read the data Xs
+	path_data = os.path.join(CWDIR,'./data/df_all.csv')
 	df_all = pd.read_csv(path_data)
-	#get rid of the short ones
-	
+
+	# encode the data into sequence
 	tokenizer = Tokenizer()
 	tokenizer.fit_on_texts([' '.join(df_all['texts'])])
 	data = tokenizer.texts_to_sequences(df_all['texts'])
 	data = sequence.pad_sequences(data, padding='post',truncating='post',maxlen=INPUT_DIM) # truncate and pad input sequences
 
+	# prepare trainig/testing data/labels
 	judge = (df_all['split']=='train').values
 	train_data = data[judge]
 	test_data = data[~judge]
 	train_labels = labels[judge]
 	test_labels = labels[~judge]
 
-	#make data series	
+	# serialize the data/labels to model input/output format
 	X_train, Y_train = get_time_series(train_data,train_labels,TIME_STEPS,0)
 	X_test, Y_test = get_time_series(test_data,test_labels,TIME_STEPS,0)
 
 	
 
-	# create the model    
+	# create/load the model    
 	from keras.models import load_model
 	if os.path.isfile(path_model):
 		model = load_model(path_model)
@@ -110,9 +111,10 @@ def start_exp(exp):
 #        embedding_matrix = load_embedding_fasttext(path_JD)
  #       model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,embedding_matrix=embedding_matrix)
 		model = create_LSTM(input_dim=INPUT_DIM,output_dim=OUTPUT_DIM,time_steps=TIME_STEPS,embedding_matrix=embedding_matrix)
+	# train the model
 	if TRAIN_MODEL == True:
 		adam=Adam(lr=0.005, beta_1=0.9 ,decay=0.001)
-		model.compile(loss=LOSS, optimizer=adam, metrics=['mse'])
+		model.compile(loss=LOSS, optimizer=adam, metrics=['mse','cosine_proximity'])
 		model = train_model(model,X_train=X_train.reshape([-1,1,TIME_STEPS,INPUT_DIM]),\
 							Y_train=Y_train,\
 							verbose=1,n_epoch=N_EPOCH,validation_split=0.1,patience=PATIENCE,\
@@ -120,18 +122,21 @@ def start_exp(exp):
 							log_path=path_training_log)
 		model.save(path_model)
 	
+
+
+
+	# evaluate the model by ranking percentage score
 	yhat = model.predict(X_test.reshape([-1,1,TIME_STEPS,INPUT_DIM]))
+	# prepare the original testing labels
 	titles_all = df_all.titles.values
 	titles_test = titles_all[~judge]
 	Y = np.concatenate([Y_test,Y_train])
 
-
-
-	#evaluate the model
 	df = get_rank_df(yhat,titles_test,Y,titles_all)
 #	df = get_rank_df(yhat,titles_test,Y_test,titles_test)
 	df.to_csv(path_eval,index=False)
 
+	# log the results
 	exp['start_time'] = str(start_time.replace(microsecond=0))
 	exp['end_time'] = str(datetime.datetime.now().replace(microsecond=0))
 

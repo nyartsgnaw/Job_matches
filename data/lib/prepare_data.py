@@ -251,7 +251,7 @@ def remove_stopwords(texts):
 	return texts
 if __name__ =='__main__':
 	job_description_path = os.path.join(CWDIR,'./../tmp/job_description.json')
-	model_path = os.path.join(CWDIR,'./../logs/models/Word2Vec_nouns.model')
+	model_path = os.path.join(CWDIR,'./../../logs/models/Word2Vec_nouns.model')
 	pdata = prepare_data()
 	# get data
 	path_data = os.path.join(CWDIR,'./../raw_data/online-job-postings/data job posts.csv')
@@ -293,10 +293,10 @@ if __name__ =='__main__':
 			##select nouns by part of speech model
 			tokenized_sent = sent_tokenize(data)
 			stoplower_ls = [x.split(' ') for x in remove_stopwords(tokenized_sent)]
-			tagged_ls = [nltk.pos_tag(x) for x in stoplower_ls]
+			tagged_ls = [nltk.pos_tag(x) if x!=[''] else ('','') for x in stoplower_ls]
 
-			pos_tokenized_ls = [pdata.filter_posTag(x) for x in tagged_ls]
-			
+			pos_tokenized_ls = [pdata.filter_posTag(x) if x!=('','') else [''] for x in tagged_ls]
+
 			# train skip-gram model
 			print('start model training')
 			model = Word2Vec( size=100, window=7, min_count=1, workers=16)
@@ -336,10 +336,7 @@ if __name__ =='__main__':
 	with open(job_description_path,'r') as f:
 		JD_ls = json.load(f)
 	texts = [','.join(x['skill_tech'])+' '+x['responsibility']+' '+x['qualification'] for x in JD_ls]    
-
-	df_raw['clean_texts'] = remove_stopwords(texts)
 	df_raw['clean_titles'] = remove_stopwords(df_raw['Title'].values)
-
 
 	df_out = df_raw[['clean_texts','clean_titles']]
 	df_out.columns = ['texts','titles']
@@ -357,3 +354,146 @@ if __name__ =='__main__':
 					count[k] = 0
 	print('miss counts:')
 	print(count)
+#*************************************************************************************************
+"""
+	df_raw['clean_texts'] = remove_stopwords(texts)
+
+	titles = df_raw['Title'].values.copy()
+	for i in range(len(titles)):
+		t = titles[i]
+		#delete what's in the parathes
+		if re.search('/',t):
+			ls = t.split(' ')
+			pos_ls = []
+			for i in range(len(ls)):
+				#delete single / and add it to previous and mark
+				if ls[i] == '/':
+					ls[i-1] = ls[i-1]+'/'
+					del ls[i]
+					pos_ls.append(i-1)
+				#mark and delete
+				elif re.search('/',ls[i]):
+					ls[i] = ls[i].replace('/','')
+					print(ls[i])
+					pos_ls.append(i)
+		
+		dict_opt = {}
+		for i in range(len(pos_ls)):
+			pos = pos_ls[i]
+			dict_opt[pos] = [ls[pos],ls[pos+1]]
+
+
+			
+		dict_fix = {0:ls[:pos_ls[0]],len(pos_ls):ls[pos_ls[-1]+2:]}
+		i = 0
+		while i < len(pos_ls)-1:
+			pos = pos_ls[i]
+			pos_next = pos_ls[i+1]
+			fix = ls[pos+2:pos_next]
+			dict_fix[i+1] = fix
+			print(fix)
+			i+=1
+		
+		def get_opt(prev,i):
+			if i == len(dict_opt):
+				return prev
+			for k in dict_opt:
+				v = dict_opt[k]
+				prev = [prev]+v+[dict_fix[i]]
+				i+=1
+				return get_opt(prev,i)
+
+		get_opt(ls)
+		
+
+
+		for i in range(len(pos_ls)):
+			pos = pos_ls[i]		
+			opt0,opt1 = dict_opt[pos]
+
+		
+
+		
+
+		piece = ls[0:pos1]
+		pos
+		fix0 = ls[0:pos1]
+		+ pos0
+		+ pos0+1
+		fix1 = ls[pos1+2:pos2]
+		+ pos1
+		+ pos1+1
+		fix2 = ls[pos2+2:pos3]
+		+ pos2
+		+ pos2+1
+		fix3 = ls[pos3+2:pos4]
+		+ pos3
+		+ pos3+1
+				
+			
+
+
+
+			i = 0
+			for i in range(len(ls)):
+
+				tkn = ls[i]
+				if tkn.find('/'):
+					tkn = tkn.replace('/','')
+				
+				ls1 = ls[:i+1]+ls[i+2:]
+				ls2 = 
+
+
+			print(ls)
+
+	#delete what's after /
+	#to, on, of, in, at, change orders
+
+
+		pat_segwords = " to | in | of | for | at | on | - |,"
+		if re.search(pat_segwords,t):
+			t = re.split(pat_segwords, t)[:2]
+			t = t[1] +' '+t[0]
+	ls_rep = [
+		('\( *\w+.*\w*\)',''), #paratheisis
+		('ID *No. *[0-9]+', ''),
+		('\w\-[0-9]+',''),
+		('[0-9]+','')
+	]
+	
+	def sub_text(text,pat1,pat2):
+		if re.search(pat1,text):
+			text = re.sub(pat1,pat2,text)
+		return text
+			
+
+
+
+			titles[i] = t
+	#replace word descibing job level
+	levels = (
+		('chair','senior manager'),
+		('chairman','senior manager'),
+		('scientist','senior analyst'),
+		('director','senior manager'),
+		('leader','senior manager'),
+		('leading','senior'),
+		('head','senior manager'),
+		(' sr ',' senior '),
+		('officer','senior manager'),
+		('expert','senior technician'),
+		('mid-level','junior'),
+		(' jr ',' junior '),
+		('intern','entry-level agent'),
+		('assitant','entry-level agent'),
+		('associate','entry-level'),
+		('basic','entry-level'),
+		('coordinator','entry-level agent'),
+		('support','entry-level'),
+		('contractor','short-term agent')
+	)
+	#replace non-paid, full-time. part-time, short-term, short-trim etc.
+	
+"""
+#*************************************************************************************************
